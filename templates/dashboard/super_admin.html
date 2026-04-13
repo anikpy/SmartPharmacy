@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Super Admin Dashboard - Smart Pharmacy{% endblock %}
+
+{% block content %}
+<h1 class="text-3xl font-bold text-blue-600 mb-8">Super Admin Dashboard</h1>
+
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-gray-500 text-sm uppercase">Total Shops</h2>
+        <p class="text-3xl font-bold text-blue-600">{{ total_shops }}</p>
+    </div>
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-gray-500 text-sm uppercase">Total Medicines</h2>
+        <p class="text-3xl font-bold text-green-600">{{ total_medicines }}</p>
+    </div>
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-gray-500 text-sm uppercase">Total Users</h2>
+        <p class="text-3xl font-bold text-purple-600">{{ total_users }}</p>
+    </div>
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-gray-500 text-sm uppercase">Shop Owners</h2>
+        <p class="text-3xl font-bold text-orange-600">{{ user_distribution.shop_owners }}</p>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-bold mb-4">Recent Shops</h2>
+        <ul class="space-y-2">
+            {% for shop in recent_shops %}
+            <li class="flex justify-between items-center py-2 border-b">
+                <span>{{ shop.name }}</span>
+                <span class="text-sm text-gray-500">{{ shop.created_at|date:"M d, Y" }}</span>
+            </li>
+            {% empty %}
+            <li class="text-gray-500">No shops registered yet</li>
+            {% endfor %}
+        </ul>
+        <a href="{% url 'accounts:register_shop' %}" class="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+            Register New Shop
+        </a>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-bold mb-4">Quick Actions</h2>
+        <div class="space-y-3">
+            <a href="{% url 'catalog:list' %}" class="block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-center">
+                Manage Master Catalog
+            </a>
+            <a href="{% url 'catalog:import_csv' %}" class="block bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-center">
+                Import CSV
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

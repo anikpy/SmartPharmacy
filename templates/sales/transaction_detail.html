@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}Invoice {{ transaction.invoice_number }} - Smart Pharmacy{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold text-blue-600">Invoice {{ transaction.invoice_number }}</h1>
+        <button onclick="window.print()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+            Print
+        </button>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-md p-8" id="invoice">
+        <div class="border-b pb-6 mb-6">
+            <h2 class="text-2xl font-bold text-blue-600 mb-4">{{ transaction.shop.shop.name|default:transaction.shop.username }}</h2>
+            <div class="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                    <p class="text-gray-500">Invoice Number:</p>
+                    <p class="font-semibold">{{ transaction.invoice_number }}</p>
+                </div>
+                <div>
+                    <p class="text-gray-500">Date:</p>
+                    <p class="font-semibold">{{ transaction.created_at|date:"Y-m-d H:i" }}</p>
+                </div>
+                <div>
+                    <p class="text-gray-500">Customer:</p>
+                    <p class="font-semibold">{{ transaction.customer.name|default:"Walk-in Customer" }}</p>
+                </div>
+                <div>
+                    <p class="text-gray-500">Payment Method:</p>
+                    <p class="font-semibold">{{ transaction.get_payment_method_display }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <table class="w-full mb-6">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-4 py-2 text-left text-sm font-medium text-gray-500">Medicine</th>
+                    <th class="px-4 py-2 text-left text-sm font-medium text-gray-500">Generic</th>
+                    <th class="px-4 py-2 text-left text-sm font-medium text-gray-500">Batch</th>
+                    <th class="px-4 py-2 text-right text-sm font-medium text-gray-500">Qty</th>
+                    <th class="px-4 py-2 text-right text-sm font-medium text-gray-500">Price</th>
+                    <th class="px-4 py-2 text-right text-sm font-medium text-gray-500">Total</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for item in transaction.items.all %}
+                <tr>
+                    <td class="px-4 py-2">{{ item.medicine_name }}</td>
+                    <td class="px-4 py-2 text-sm text-gray-500">{{ item.generic_name }}</td>
+                    <td class="px-4 py-2 text-sm">{{ item.batch_number }}</td>
+                    <td class="px-4 py-2 text-right">{{ item.quantity }}</td>
+                    <td class="px-4 py-2 text-right">৳{{ item.unit_price }}</td>
+                    <td class="px-4 py-2 text-right font-semibold">৳{{ item.total_price }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div class="flex justify-end">
+            <div class="w-64">
+                <div class="flex justify-between py-2">
+                    <span>Subtotal:</span>
+                    <span>৳{{ transaction.subtotal }}</span>
+                </div>
+                <div class="flex justify-between py-2">
+                    <span>Discount:</span>
+                    <span>৳{{ transaction.discount }}</span>
+                </div>
+                <div class="flex justify-between py-2">
+                    <span>Tax:</span>
+                    <span>৳{{ transaction.tax }}</span>
+                </div>
+                <div class="flex justify-between py-2 border-t font-bold text-lg">
+                    <span>Total:</span>
+                    <span>৳{{ transaction.total }}</span>
+                </div>
+            </div>
+        </div>
+        
+        {% if transaction.notes %}
+        <div class="mt-6 pt-6 border-t">
+            <p class="text-gray-500">Notes:</p>
+            <p>{{ transaction.notes }}</p>
+        </div>
+        {% endif %}
+    </div>
+    
+    <a href="{% url 'sales:list' %}" class="inline-block mt-6 bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300">
+        Back to Transactions
+    </a>
+</div>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Shop Owner Dashboard - Smart Pharmacy{% endblock %}
+
+{% block content %}
+<h1 class="text-3xl font-bold text-blue-600 mb-8">Shop Owner Dashboard</h1>
+
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-gray-500 text-sm uppercase">Today's Revenue</h2>
+        <p class="text-3xl font-bold text-blue-600">৳{{ today_revenue }}</p>
+    </div>
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-gray-500 text-sm uppercase">Today's Transactions</h2>
+        <p class="text-3xl font-bold text-green-600">{{ today_transactions }}</p>
+    </div>
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-gray-500 text-sm uppercase">Month Revenue</h2>
+        <p class="text-3xl font-bold text-purple-600">৳{{ month_revenue }}</p>
+    </div>
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-gray-500 text-sm uppercase">Low Stock Alerts</h2>
+        <p class="text-3xl font-bold text-red-600">{{ low_stock_count }}</p>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-gray-500 text-sm uppercase">Inventory Value</h2>
+        <p class="text-3xl font-bold text-orange-600">৳{{ inventory_value }}</p>
+    </div>
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-gray-500 text-sm uppercase">Staff Count</h2>
+        <p class="text-3xl font-bold text-teal-600">{{ staff_count }}</p>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-bold mb-4">Inventory</h2>
+        <div class="space-y-2">
+            <a href="{% url 'inventory:list' %}" class="block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-center">
+                View Inventory
+            </a>
+            <a href="{% url 'inventory:add' %}" class="block bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-center">
+                Add Medicine
+            </a>
+            <a href="{% url 'inventory:low_stock' %}" class="block bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 text-center">
+                Low Stock Alerts
+            </a>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-bold mb-4">Sales</h2>
+        <div class="space-y-2">
+            <a href="{% url 'sales:pos' %}" class="block bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 text-center">
+                Point of Sale (POS)
+            </a>
+            <a href="{% url 'sales:list' %}" class="block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-center">
+                View Transactions
+            </a>
+            <a href="{% url 'sales:customer_list' %}" class="block bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-center">
+                Manage Customers
+            </a>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-bold mb-4">Staff</h2>
+        <div class="space-y-2">
+            <a href="{% url 'accounts:create_staff' %}" class="block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-center">
+                Add Staff Member
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

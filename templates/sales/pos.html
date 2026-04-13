@@ -1,0 +1,228 @@
+{% extends 'base.html' %}
+
+{% block title %}POS - Smart Pharmacy{% endblock %}
+
+{% block extra_css %}
+<style>
+    .cart-item {
+        transition: all 0.2s;
+    }
+    .cart-item:hover {
+        background-color: #f3f4f6;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="flex gap-6">
+    <!-- Search and Add Items -->
+    <div class="w-2/3">
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4">Search Medicines</h2>
+            <div class="flex gap-2">
+                <input 
+                    type="text" 
+                    id="search-input" 
+                    class="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Search medicines... (Ctrl+S)"
+                    autocomplete="off"
+                >
+                <input 
+                    type="number" 
+                    id="quantity-input" 
+                    class="w-24 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Qty"
+                    value="1"
+                    min="1"
+                >
+                <button 
+                    id="add-btn" 
+                    class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+                >
+                    Add (Enter)
+                </button>
+            </div>
+            <div id="search-results" class="mt-4 hidden">
+                <!-- Search results will appear here -->
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-bold mb-4">Cart</h2>
+            <div id="cart-items" class="space-y-2">
+                {% for item in cart %}
+                <div class="cart-item flex justify-between items-center p-3 border rounded-lg" data-inventory-id="{{ item.inventory_id }}">
+                    <div>
+                        <p class="font-semibold">{{ item.medicine_name }}</p>
+                        <p class="text-sm text-gray-500">{{ item.generic }} - {{ item.strength }}</p>
+                        <p class="text-sm text-gray-500">Batch: {{ item.batch_number }}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-semibold">৳{{ item.total }}</p>
+                        <p class="text-sm text-gray-500">{{ item.quantity }} x ৳{{ item.unit_price }}</p>
+                        <button 
+                            class="text-red-600 hover:text-red-800 text-sm mt-1 remove-btn"
+                            data-inventory-id="{{ item.inventory_id }}"
+                        >
+                            Remove
+                        </button>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-gray-500 text-center py-8">Cart is empty</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Cart Summary and Checkout -->
+    <div class="w-1/3">
+        <div class="bg-white rounded-lg shadow-md p-6 sticky top-8">
+            <h2 class="text-xl font-bold mb-4">Summary</h2>
+            
+            <div class="space-y-2 mb-6">
+                <div class="flex justify-between">
+                    <span>Subtotal</span>
+                    <span>৳{{ subtotal }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>Discount</span>
+                    <span>৳{{ discount }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>Tax</span>
+                    <span>৳{{ tax }}</span>
+                </div>
+                <div class="flex justify-between font-bold text-lg border-t pt-2">
+                    <span>Total</span>
+                    <span>৳{{ total }}</span>
+                </div>
+            </div>
+            
+            <form method="post" id="checkout-form">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button 
+                    type="submit" 
+                    class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 font-bold"
+                    id="complete-btn"
+                >
+                    Complete Sale (F10)
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+    // Ctrl+S for search
+    if (e.ctrlKey && e.key === 's') {
+        e.preventDefault();
+        document.getElementById('search-input').focus();
+    }
+    
+    // Enter to add item
+    if (e.key === 'Enter' && document.activeElement.id === 'search-input') {
+        e.preventDefault();
+        document.getElementById('add-btn').click();
+    }
+    
+    // F10 to complete sale
+    if (e.key === 'F10') {
+        e.preventDefault();
+        document.getElementById('complete-btn').click();
+    }
+});
+
+// Search functionality
+const searchInput = document.getElementById('search-input');
+const searchResults = document.getElementById('search-results');
+let selectedMedicine = null;
+
+searchInput.addEventListener('input', function() {
+    const query = this.value;
+    if (query.length < 2) {
+        searchResults.classList.add('hidden');
+        return;
+    }
+    
+    fetch(`/inventory/search/?q=${query}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.results.length > 0) {
+                searchResults.innerHTML = data.results.map(item => `
+                    <div class="search-result p-3 border rounded-lg cursor-pointer hover:bg-gray-50" 
+                         data-inventory-id="${item.id}"
+                         data-price="${item.price}"
+                         data-stock="${item.stock}">
+                        <p class="font-semibold">${item.name}</p>
+                        <p class="text-sm text-gray-500">${item.generic} - ${item.strength}</p>
+                        <p class="text-sm">Price: ৳${item.price} | Stock: ${item.stock}</p>
+                    </div>
+                `).join('');
+                searchResults.classList.remove('hidden');
+                
+                // Click handler for search results
+                document.querySelectorAll('.search-result').forEach(el => {
+                    el.addEventListener('click', function() {
+                        selectedMedicine = {
+                            inventory_id: this.dataset.inventoryId,
+                            price: parseFloat(this.dataset.price),
+                            stock: parseInt(this.dataset.stock),
+                            name: this.querySelector('.font-semibold').textContent
+                        };
+                        searchInput.value = this.querySelector('.font-semibold').textContent;
+                        searchResults.classList.add('hidden');
+                    });
+                });
+            } else {
+                searchResults.innerHTML = '<p class="text-gray-500">No results found</p>';
+                searchResults.classList.remove('hidden');
+            }
+        });
+});
+
+// Add to cart
+document.getElementById('add-btn').addEventListener('click', function() {
+    if (!selectedMedicine) {
+        alert('Please select a medicine first');
+        return;
+    }
+    
+    const quantity = parseInt(document.getElementById('quantity-input').value);
+    
+    if (quantity > selectedMedicine.stock) {
+        alert('Insufficient stock');
+        return;
+    }
+    
+    fetch(`/sales/pos/add-item/?inventory_id=${selectedMedicine.inventory_id}&quantity=${quantity}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert(data.error);
+            }
+        });
+});
+
+// Remove from cart
+document.querySelectorAll('.remove-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const inventoryId = this.dataset.inventoryId;
+        fetch(`/sales/pos/remove-item/${inventoryId}/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                }
+            });
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}POS - Smart Pharmacy{% endblock %}
+
+{% block content %}
+<h1 class="text-3xl font-bold text-blue-600 mb-8">Point of Sale</h1>
+
+<div class="bg-white rounded-lg shadow-md p-6">
+    <p class="text-gray-600 mb-4">Use the POS interface to process sales quickly.</p>
+    
+    <div class="space-y-4">
+        <a href="{% url 'sales:pos' %}" class="block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 text-center text-lg">
+            Open POS
+        </a>
+        
+        <div class="bg-gray-50 rounded-lg p-4">
+            <h3 class="font-bold mb-2">Keyboard Shortcuts</h3>
+            <ul class="text-sm text-gray-600 space-y-1">
+                <li><kbd class="bg-gray-200 px-2 py-1 rounded">Ctrl</kbd> + <kbd class="bg-gray-200 px-2 py-1 rounded">S</kbd> - Open search</li>
+                <li><kbd class="bg-gray-200 px-2 py-1 rounded">Enter</kbd> - Add to cart</li>
+                <li><kbd class="bg-gray-200 px-2 py-1 rounded">F10</kbd> - Print invoice</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

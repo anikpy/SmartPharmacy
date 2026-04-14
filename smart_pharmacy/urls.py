@@ -14,6 +14,7 @@ urlpatterns = [
     path('inventory/', include('inventory.urls')),
     path('sales/', include('sales.urls')),
     path('dashboard/', include('dashboard.urls')),
+    path('analytics/', include('analytics.urls')),
 ]
 
 if settings.DEBUG:

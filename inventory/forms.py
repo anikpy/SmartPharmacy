@@ -6,15 +6,13 @@ from catalog.models import MasterCatalog
 class ShopInventoryForm(forms.ModelForm):
     class Meta:
         model = ShopInventory
-        fields = ['master_medicine', 'local_price', 'stock_quantity', 'expiry_date', 'batch_number', 'low_stock_threshold', 'is_active']
+        fields = ['master_medicine', 'local_price', 'stock_quantity', 'expiry_date', 'batch_number', 'low_stock_threshold']
         widgets = {
-            'master_medicine': forms.Select(attrs={'class': 'form-control'}),
             'local_price': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
             'stock_quantity': forms.NumberInput(attrs={'class': 'form-control'}),
             'expiry_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'batch_number': forms.TextInput(attrs={'class': 'form-control'}),
             'low_stock_threshold': forms.NumberInput(attrs={'class': 'form-control'}),
-            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
 

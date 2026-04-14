@@ -7,15 +7,99 @@
     <h1 class="text-3xl font-bold text-blue-600 mb-6">{{ action }} Medicine</h1>
     
     <div class="bg-white rounded-lg shadow-md p-6">
-        <form method="post">
+        <form method="post" class="space-y-6">
             {% csrf_token %}
-            {{ form.as_p }}
-            <div class="flex gap-4 mt-6">
+
+            {% if form.errors %}
+                <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <h3 class="text-red-800 font-medium mb-2">Please fix the errors below:</h3>
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}
+                            <p class="text-red-600 text-sm">{{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">{{ form.brand_name.label }}</label>
+                    {{ form.brand_name }}
+                    {% if form.brand_name.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ form.brand_name.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">{{ form.generic.label }}</label>
+                    {{ form.generic }}
+                    {% if form.generic.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ form.generic.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">{{ form.type.label }}</label>
+                    {{ form.type }}
+                    {% if form.type.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ form.type.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">{{ form.dosage_form.label }}</label>
+                    {{ form.dosage_form }}
+                    {% if form.dosage_form.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ form.dosage_form.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">{{ form.strength.label }}</label>
+                    {{ form.strength }}
+                    {% if form.strength.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ form.strength.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-gray-700 font-medium mb-2">{{ form.manufacturer.label }}</label>
+                {{ form.manufacturer }}
+                {% if form.manufacturer.errors %}
+                    <p class="text-red-600 text-sm mt-1">{{ form.manufacturer.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div>
+                <label class="block text-gray-700 font-medium mb-2">{{ form.package_container.label }}</label>
+                {{ form.package_container }}
+                {% if form.package_container.errors %}
+                    <p class="text-red-600 text-sm mt-1">{{ form.package_container.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div>
+                <label class="block text-gray-700 font-medium mb-2">{{ form.package_size.label }}</label>
+                {{ form.package_size }}
+                {% if form.package_size.errors %}
+                    <p class="text-red-600 text-sm mt-1">{{ form.package_size.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="flex items-center">
+                {{ form.is_active }}
+                <label class="ml-2 text-gray-700">{{ form.is_active.label }}</label>
+            </div>
+
+            <div class="flex gap-4 pt-4">
                 <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
-                    {{ action }}
+                    <i class="fas fa-save mr-2"></i>{{ action }} Medicine
                 </button>
                 <a href="{% url 'catalog:list' %}" class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300">
-                    Cancel
+                    <i class="fas fa-times mr-2"></i>Cancel
                 </a>
             </div>
         </form>

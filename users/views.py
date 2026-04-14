@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import UserRegistrationForm, ShopRegistrationForm, StaffCreationForm
@@ -59,3 +59,10 @@ def create_staff(request):
 def profile(request):
     """User profile view"""
     return render(request, 'users/profile.html', {'user': request.user})
+
+
+def logout_view(request):
+    """Custom logout view that accepts both GET and POST requests"""
+    logout(request)
+    messages.success(request, "You have been successfully logged out.")
+    return redirect('users:login')

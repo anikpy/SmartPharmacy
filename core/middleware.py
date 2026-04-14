@@ -14,21 +14,29 @@ class RoleBasedAccessMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
+    # Public paths that don't require authentication
+    PUBLIC_PATHS = [
+        '/accounts/login/',
+        '/accounts/logout/',
+        '/accounts/register/',
+        '/users/login/',
+        '/users/logout/',
+        '/users/register/',
+    ]
+
     def __call__(self, request):
         # Skip middleware for static files and admin
         if request.path.startswith('/static/') or request.path.startswith('/admin/'):
             return self.get_response(request)
-        
-        # Skip middleware for login/logout pages
-        if request.path in ['/accounts/login/', '/accounts/logout/', '/users/login/', '/users/logout/']:
+
+        # Allow public pages (login, logout, register)
+        if request.path in self.PUBLIC_PATHS:
             return self.get_response(request)
-        
-        # Check if user is authenticated
+
+        # Redirect unauthenticated users to login
         if not request.user.is_authenticated:
-            # Allow access to login page
-            if request.path != '/users/login/':
-                return redirect('users:login')
-        
+            return redirect('users:login')
+
         response = self.get_response(request)
         return response
 

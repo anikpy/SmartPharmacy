@@ -1,0 +1,231 @@
+{% extends 'base.html' %}
+
+{% block title %}Pricing Plans - Smart Pharmacy{% endblock %}
+
+{% block content %}
+<div class="bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-16">
+    <div class="container mx-auto px-4">
+        <!-- Header -->
+        <div class="text-center mb-16">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                Choose Your <span class="text-blue-600">Perfect Plan</span>
+            </h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Start your 14-day free trial. No credit card required. Upgrade or downgrade at any time.
+            </p>
+        </div>
+
+        <!-- Billing Toggle -->
+        <div class="flex justify-center mb-12">
+            <div class="bg-gray-100 p-1 rounded-lg">
+                <button id="monthly-btn" class="px-6 py-2 text-sm font-medium rounded-md transition bg-white text-blue-600 shadow-sm">
+                    Monthly
+                </button>
+                <button id="yearly-btn" class="px-6 py-2 text-sm font-medium rounded-md transition text-gray-500 hover:text-gray-700">
+                    Yearly <span class="text-green-600 text-xs ml-1">Save up to 25%</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Pricing Cards -->
+        <div class="grid md:grid-cols-{{ plans|length|default:3 }} gap-8 max-w-6xl mx-auto">
+            {% for plan in plans %}
+            <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow border {% if plan.plan_type == 'professional' %}ring-2 ring-blue-500 relative{% else %}border-gray-200{% endif %}">
+                {% if plan.plan_type == 'professional' %}
+                <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    <span class="bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-medium">Most Popular</span>
+                </div>
+                {% endif %}
+                
+                <div class="p-8">
+                    <!-- Plan Header -->
+                    <div class="text-center mb-8">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ plan.name }}</h3>
+                        <p class="text-gray-600 mb-4">{{ plan.description }}</p>
+                        
+                        <div class="price-display">
+                            <div class="monthly-price">
+                                <span class="text-4xl font-bold text-gray-900">${{ plan.price_monthly }}</span>
+                                <span class="text-gray-600">/month</span>
+                            </div>
+                            <div class="yearly-price hidden">
+                                <span class="text-4xl font-bold text-gray-900">${{ plan.price_yearly }}</span>
+                                <span class="text-gray-600">/year</span>
+                                {% if plan.yearly_discount_percent > 0 %}
+                                <div class="text-sm text-green-600 mt-1">
+                                    Save {{ plan.yearly_discount_percent }}% annually
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Features -->
+                    <div class="space-y-4 mb-8">
+                        <div class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>Up to {{ plan.max_users }} team member{{ plan.max_users|pluralize }}</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>{{ plan.max_inventory_items|floatformat:0 }} inventory items</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>{{ plan.max_transactions_per_month|floatformat:0 }} transactions/month</span>
+                        </div>
+                        {% if plan.analytics_dashboard %}
+                        <div class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>Advanced Analytics</span>
+                        </div>
+                        {% endif %}
+                        {% if plan.advanced_reporting %}
+                        <div class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>Custom Reports</span>
+                        </div>
+                        {% endif %}
+                        {% if plan.api_access %}
+                        <div class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>API Access</span>
+                        </div>
+                        {% endif %}
+                        {% if plan.priority_support %}
+                        <div class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>Priority Support</span>
+                        </div>
+                        {% endif %}
+                        {% if plan.multi_location %}
+                        <div class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>Multi-Location Support</span>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- CTA Button -->
+                    <div class="text-center">
+                        {% if user_is_authenticated %}
+                            <a href="{% url 'subscriptions:choose_plan' plan.slug %}" 
+                               class="block w-full {% if plan.plan_type == 'professional' %}bg-blue-600 hover:bg-blue-700 text-white{% else %}bg-gray-100 hover:bg-gray-200 text-gray-900{% endif %} py-3 px-6 rounded-lg font-medium transition">
+                                {% if plan.plan_type == 'basic' %}Start Free Trial{% else %}Choose {{ plan.name }}{% endif %}
+                            </a>
+                        {% else %}
+                            <a href="{% url 'users:register' %}" 
+                               class="block w-full {% if plan.plan_type == 'professional' %}bg-blue-600 hover:bg-blue-700 text-white{% else %}bg-gray-100 hover:bg-gray-200 text-gray-900{% endif %} py-3 px-6 rounded-lg font-medium transition">
+                                Start Free Trial
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Features Comparison -->
+        <div class="mt-20">
+            <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">Compare All Features</h2>
+            
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                    Features
+                                </th>
+                                {% for plan in plans %}
+                                <th class="px-6 py-4 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                    {{ plan.name }}
+                                </th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            {% for feature in features_matrix %}
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 text-sm font-medium text-gray-900">
+                                    {{ feature.name }}
+                                </td>
+                                {% for plan_feature in feature.plans %}
+                                <td class="px-6 py-4 text-sm text-center">
+                                    {% if feature.type == 'boolean' %}
+                                        {% if plan_feature.value %}
+                                            <i class="fas fa-check text-green-500"></i>
+                                        {% else %}
+                                            <i class="fas fa-times text-gray-400"></i>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="font-medium">{{ plan_feature.display }}</span>
+                                    {% endif %}
+                                </td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="mt-20 max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">Frequently Asked Questions</h2>
+            
+            <div class="space-y-8">
+                <div class="bg-white rounded-lg p-6 shadow-md">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Can I change plans anytime?</h3>
+                    <p class="text-gray-600">Yes! You can upgrade or downgrade your plan at any time. Changes take effect immediately.</p>
+                </div>
+                
+                <div class="bg-white rounded-lg p-6 shadow-md">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">What payment methods do you accept?</h3>
+                    <p class="text-gray-600">We accept all major credit cards, PayPal, and local payment methods like bKash and Nagad for Bangladesh customers.</p>
+                </div>
+                
+                <div class="bg-white rounded-lg p-6 shadow-md">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Is there a setup fee?</h3>
+                    <p class="text-gray-600">No setup fees! Start with our 14-day free trial and pay only when you're ready.</p>
+                </div>
+                
+                <div class="bg-white rounded-lg p-6 shadow-md">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Do you offer refunds?</h3>
+                    <p class="text-gray-600">Yes, we offer a 30-day money-back guarantee if you're not satisfied with our service.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const monthlyBtn = document.getElementById('monthly-btn');
+    const yearlyBtn = document.getElementById('yearly-btn');
+    const monthlyPrices = document.querySelectorAll('.monthly-price');
+    const yearlyPrices = document.querySelectorAll('.yearly-price');
+
+    monthlyBtn.addEventListener('click', function() {
+        monthlyBtn.classList.add('bg-white', 'text-blue-600', 'shadow-sm');
+        monthlyBtn.classList.remove('text-gray-500');
+        yearlyBtn.classList.add('text-gray-500');
+        yearlyBtn.classList.remove('bg-white', 'text-blue-600', 'shadow-sm');
+        
+        monthlyPrices.forEach(price => price.classList.remove('hidden'));
+        yearlyPrices.forEach(price => price.classList.add('hidden'));
+    });
+
+    yearlyBtn.addEventListener('click', function() {
+        yearlyBtn.classList.add('bg-white', 'text-blue-600', 'shadow-sm');
+        yearlyBtn.classList.remove('text-gray-500');
+        monthlyBtn.classList.add('text-gray-500');
+        monthlyBtn.classList.remove('bg-white', 'text-blue-600', 'shadow-sm');
+        
+        yearlyPrices.forEach(price => price.classList.remove('hidden'));
+        monthlyPrices.forEach(price => price.classList.add('hidden'));
+    });
+});
+</script>
+{% endblock %}

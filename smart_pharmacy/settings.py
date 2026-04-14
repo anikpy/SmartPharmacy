@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'inventory',
     'sales',
     'dashboard',
+    'analytics',
 ]
 
 MIDDLEWARE = [
@@ -102,6 +103,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Custom User Model
 AUTH_USER_MODEL = 'users.User'
+
+# Auth redirects
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/dashboard/'
+LOGOUT_REDIRECT_URL = '/accounts/login/'
+
+# Auth redirects
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/dashboard/'
+LOGOUT_REDIRECT_URL = '/accounts/login/'
 
 # Role definitions
 ROLE_SUPER_ADMIN = 'SUPER_ADMIN'

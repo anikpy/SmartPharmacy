@@ -52,10 +52,10 @@ def shop_owner_dashboard(request):
         created_at__date=today,
         status='completed'
     )
-    
+
     today_revenue = today_sales.aggregate(Sum('total'))['total__sum'] or 0
     today_transactions = today_sales.count()
-    
+
     # This month's sales
     month_start = today.replace(day=1)
     month_sales = Transaction.objects.filter(
@@ -63,7 +63,7 @@ def shop_owner_dashboard(request):
         created_at__date__gte=month_start,
         status='completed'
     )
-    
+
     month_revenue = month_sales.aggregate(Sum('total'))['total__sum'] or 0
     
     # Low stock alerts
@@ -73,7 +73,7 @@ def shop_owner_dashboard(request):
     ).filter(
         stock_quantity__lte=F('low_stock_threshold')
     ).count()
-    
+
     # Total inventory value
     inventory_value = ShopInventory.objects.filter(
         shop=request.user,

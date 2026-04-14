@@ -5,18 +5,118 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Smart Pharmacy{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     {% block extra_css %}{% endblock %}
 </head>
 <body class="bg-gray-100">
     {% if user.is_authenticated %}
-    <nav class="bg-blue-600 text-white shadow-lg">
+    <nav class="bg-blue-900 text-white shadow-lg sticky top-0 z-50">
         <div class="container mx-auto px-4">
             <div class="flex justify-between items-center py-4">
-                <a href="{% url 'core:dashboard' %}" class="text-2xl font-bold">Smart Pharmacy</a>
+                <!-- Logo and Brand -->
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-pills text-2xl text-blue-300"></i>
+                    <a href="{% url 'core:dashboard' %}" class="text-2xl font-bold hover:text-blue-200 transition">Smart Pharmacy</a>
+                </div>
+
+                <!-- Navigation Links based on Role -->
+                <div class="hidden md:flex items-center space-x-6">
+                    {% if user.role == 'SUPER_ADMIN' %}
+                        <a href="{% url 'dashboard:super_admin' %}" class="hover:text-blue-300 transition flex items-center space-x-2">
+                            <i class="fas fa-tachometer-alt"></i><span>Dashboard</span>
+                        </a>
+                        <a href="{% url 'catalog:list' %}" class="hover:text-blue-300 transition flex items-center space-x-2">
+                            <i class="fas fa-pills"></i><span>Master Catalog</span>
+                        </a>
+                        <a href="{% url 'users:register_shop' %}" class="hover:text-blue-300 transition flex items-center space-x-2">
+                            <i class="fas fa-store"></i><span>Register Shop</span>
+                        </a>
+                    {% elif user.role == 'SHOP_OWNER' %}
+                        <a href="{% url 'dashboard:shop_owner' %}" class="hover:text-blue-300 transition flex items-center space-x-2">
+                            <i class="fas fa-tachometer-alt"></i><span>Dashboard</span>
+                        </a>
+                        <a href="{% url 'inventory:list' %}" class="hover:text-blue-300 transition flex items-center space-x-2">
+                            <i class="fas fa-boxes"></i><span>Inventory</span>
+                        </a>
+                        <a href="{% url 'sales:pos' %}" class="hover:text-blue-300 transition flex items-center space-x-2">
+                            <i class="fas fa-cash-register"></i><span>Point of Sale</span>
+                        </a>
+                        <a href="{% url 'sales:list' %}" class="hover:text-blue-300 transition flex items-center space-x-2">
+                            <i class="fas fa-file-invoice"></i><span>Transactions</span>
+                        </a>
+                        <a href="{% url 'users:create_staff' %}" class="hover:text-blue-300 transition flex items-center space-x-2">
+                            <i class="fas fa-users"></i><span>Staff Management</span>
+                        </a>
+                    {% elif user.role == 'SHOP_WORKER' %}
+                        <a href="{% url 'dashboard:shop_worker' %}" class="hover:text-blue-300 transition flex items-center space-x-2">
+                            <i class="fas fa-tachometer-alt"></i><span>Dashboard</span>
+                        </a>
+                        <a href="{% url 'sales:pos' %}" class="bg-green-700 hover:bg-green-600 px-4 py-2 rounded transition flex items-center space-x-2">
+                            <i class="fas fa-cash-register"></i><span>POS Terminal</span>
+                        </a>
+                        <a href="{% url 'sales:list' %}" class="hover:text-blue-300 transition flex items-center space-x-2">
+                            <i class="fas fa-file-invoice"></i><span>Sales History</span>
+                        </a>
+                    {% endif %}
+                </div>
+
+                <!-- User Info & Logout -->
                 <div class="flex items-center space-x-4">
-                    <span class="text-sm">{{ user.username }} ({{ user.get_role_display }})</span>
-                    <a href="{% url 'accounts:profile' %}" class="hover:text-blue-200">Profile</a>
-                    <a href="{% url 'accounts:logout' %}" class="hover:text-blue-200">Logout</a>
+                    <div class="text-sm">
+                        <div class="font-medium">{{ user.get_full_name|default:user.username }}</div>
+                        <div class="text-blue-200 text-xs">{{ user.get_role_display }}{% if user.shop %} • {{ user.shop.name }}{% endif %}</div>
+                    </div>
+
+                    <!-- Dropdown Menu -->
+                    <div class="relative group">
+                        <button class="flex items-center space-x-1 hover:text-blue-300 transition px-3 py-2 rounded">
+                            <i class="fas fa-cog"></i>
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+
+                        <!-- Dropdown Content -->
+                        <div class="absolute right-0 mt-2 w-48 bg-white rounded shadow-lg py-2 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition">
+                            <a href="{% url 'users:profile' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition">
+                                <i class="fas fa-user mr-2"></i>Profile Settings
+                            </a>
+                            <div class="border-t border-gray-200 my-1"></div>
+                            <a href="{% url 'users:logout' %}" class="block px-4 py-2 text-red-600 hover:bg-red-50 transition">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Sign Out
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-white hover:text-blue-300 p-2">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="md:hidden hidden border-t border-blue-700 py-4">
+                {% if user.role == 'SUPER_ADMIN' %}
+                    <a href="{% url 'dashboard:super_admin' %}" class="block py-2 px-4 hover:text-blue-300"><i class="fas fa-tachometer-alt mr-2"></i>Dashboard</a>
+                    <a href="{% url 'catalog:list' %}" class="block py-2 px-4 hover:text-blue-300"><i class="fas fa-pills mr-2"></i>Master Catalog</a>
+                    <a href="{% url 'users:register_shop' %}" class="block py-2 px-4 hover:text-blue-300"><i class="fas fa-store mr-2"></i>Register Shop</a>
+                {% elif user.role == 'SHOP_OWNER' %}
+                    <a href="{% url 'dashboard:shop_owner' %}" class="block py-2 px-4 hover:text-blue-300"><i class="fas fa-tachometer-alt mr-2"></i>Dashboard</a>
+                    <a href="{% url 'inventory:list' %}" class="block py-2 px-4 hover:text-blue-300"><i class="fas fa-boxes mr-2"></i>Inventory</a>
+                    <a href="{% url 'sales:pos' %}" class="block py-2 px-4 hover:text-blue-300"><i class="fas fa-cash-register mr-2"></i>Point of Sale</a>
+                    <a href="{% url 'sales:list' %}" class="block py-2 px-4 hover:text-blue-300"><i class="fas fa-file-invoice mr-2"></i>Transactions</a>
+                    <a href="{% url 'users:create_staff' %}" class="block py-2 px-4 hover:text-blue-300"><i class="fas fa-users mr-2"></i>Staff Management</a>
+                {% elif user.role == 'SHOP_WORKER' %}
+                    <a href="{% url 'dashboard:shop_worker' %}" class="block py-2 px-4 hover:text-blue-300"><i class="fas fa-tachometer-alt mr-2"></i>Dashboard</a>
+                    <a href="{% url 'sales:pos' %}" class="block py-2 px-4 bg-green-700 rounded mb-2"><i class="fas fa-cash-register mr-2"></i>POS Terminal</a>
+                    <a href="{% url 'sales:list' %}" class="block py-2 px-4 hover:text-blue-300"><i class="fas fa-file-invoice mr-2"></i>Sales History</a>
+                {% endif %}
+                <div class="border-t border-blue-700 mt-4 pt-4">
+                    <a href="{% url 'users:profile' %}" class="block py-2 px-4 hover:text-blue-300"><i class="fas fa-user mr-2"></i>Profile Settings</a>
+                    <a href="{% url 'users:logout' %}" class="block py-2 px-4 text-red-300 hover:text-red-100">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Sign Out
+                    </a>
                 </div>
             </div>
         </div>
@@ -35,7 +135,19 @@
         {% block content %}{% endblock %}
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script>
+        // Mobile menu toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            if (mobileMenuBtn && mobileMenu) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+        });
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from . import views, api_views
 
 app_name = 'catalog'
 
@@ -8,5 +8,9 @@ urlpatterns = [
     path('create/', views.catalog_create, name='create'),
     path('<int:pk>/update/', views.catalog_update, name='update'),
     path('<int:pk>/delete/', views.catalog_delete, name='delete'),
-    path('import-csv/', views.import_csv, name='import_csv'),
+
+    # API endpoints
+    path('api/search/', api_views.medicine_search_api, name='search_api'),
+    path('api/medicine/<int:medicine_id>/', api_views.medicine_details_api, name='medicine_details'),
+    path('api/suggestions/', api_views.medicine_search_suggestions, name='suggestions_api'),
 ]

@@ -1,33 +1,88 @@
 {% extends 'base.html' %}
 
-{% block title %}Profile - Smart Pharmacy{% endblock %}
+{% block title %}User Profile - Smart Pharmacy{% endblock %}
 
 {% block content %}
-<div class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-8">
-    <h1 class="text-2xl font-bold text-blue-600 mb-6">Profile</h1>
-    
-    <div class="space-y-4">
-        <div>
-            <label class="block text-gray-700 font-semibold">Username</label>
-            <p class="text-gray-900">{{ user.username }}</p>
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-lg shadow-lg p-8">
+        <div class="text-center mb-8">
+            <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-user text-3xl text-blue-600"></i>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-800">{{ user.get_full_name|default:user.username }}</h1>
+            <p class="text-gray-600">{{ user.get_role_display }}</p>
         </div>
-        <div>
-            <label class="block text-gray-700 font-semibold">Email</label>
-            <p class="text-gray-900">{{ user.email }}</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-gray-50 rounded-lg p-4">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-user text-blue-600 mr-3"></i>
+                    <label class="block text-gray-700 font-semibold">Username</label>
+                </div>
+                <p class="text-gray-900 pl-6">{{ user.username }}</p>
+            </div>
+
+            <div class="bg-gray-50 rounded-lg p-4">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-envelope text-blue-600 mr-3"></i>
+                    <label class="block text-gray-700 font-semibold">Email Address</label>
+                </div>
+                <p class="text-gray-900 pl-6">{{ user.email|default:"Not provided" }}</p>
+            </div>
+
+            <div class="bg-gray-50 rounded-lg p-4">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-id-badge text-blue-600 mr-3"></i>
+                    <label class="block text-gray-700 font-semibold">Role</label>
+                </div>
+                <p class="text-gray-900 pl-6">
+                    <span class="px-3 py-1 text-sm rounded-full
+                        {% if user.role == 'SUPER_ADMIN' %}bg-red-100 text-red-800
+                        {% elif user.role == 'SHOP_OWNER' %}bg-green-100 text-green-800
+                        {% else %}bg-blue-100 text-blue-800{% endif %}">
+                        {{ user.get_role_display }}
+                    </span>
+                </p>
+            </div>
+
+            <div class="bg-gray-50 rounded-lg p-4">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-phone text-blue-600 mr-3"></i>
+                    <label class="block text-gray-700 font-semibold">Phone Number</label>
+                </div>
+                <p class="text-gray-900 pl-6">{{ user.phone|default:"Not provided" }}</p>
+            </div>
+
+            {% if user.shop %}
+            <div class="bg-gray-50 rounded-lg p-4 md:col-span-2">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-store text-blue-600 mr-3"></i>
+                    <label class="block text-gray-700 font-semibold">Pharmacy Information</label>
+                </div>
+                <div class="pl-6 space-y-2">
+                    <p class="text-gray-900 font-medium">{{ user.shop.name }}</p>
+                    <p class="text-sm text-gray-600">{{ user.shop.address }}</p>
+                    <div class="flex flex-wrap gap-4 text-sm text-gray-600">
+                        <span><i class="fas fa-phone mr-1"></i>{{ user.shop.phone }}</span>
+                        <span><i class="fas fa-envelope mr-1"></i>{{ user.shop.email }}</span>
+                        <span><i class="fas fa-certificate mr-1"></i>License: {{ user.shop.license_number }}</span>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 md:col-span-2">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-triangle text-yellow-600 mr-3"></i>
+                    <p class="text-yellow-800">No pharmacy assigned to your account.</p>
+                </div>
+            </div>
+            {% endif %}
         </div>
-        <div>
-            <label class="block text-gray-700 font-semibold">Role</label>
-            <p class="text-gray-900">{{ user.get_role_display }}</p>
-        </div>
-        {% if user.shop %}
-        <div>
-            <label class="block text-gray-700 font-semibold">Shop</label>
-            <p class="text-gray-900">{{ user.shop.name }}</p>
-        </div>
-        {% endif %}
-        <div>
-            <label class="block text-gray-700 font-semibold">Phone</label>
-            <p class="text-gray-900">{{ user.phone|default:"Not provided" }}</p>
+
+        <div class="mt-8 text-center">
+            <a href="{% url 'core:dashboard' %}" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition">
+                <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
+            </a>
         </div>
     </div>
 </div>

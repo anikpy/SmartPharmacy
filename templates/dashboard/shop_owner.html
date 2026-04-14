@@ -40,13 +40,13 @@
         <h2 class="text-xl font-bold mb-4">Inventory</h2>
         <div class="space-y-2">
             <a href="{% url 'inventory:list' %}" class="block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-center">
-                View Inventory
+                <i class="fas fa-list mr-2"></i>View Inventory
             </a>
             <a href="{% url 'inventory:add' %}" class="block bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-center">
-                Add Medicine
+                <i class="fas fa-plus mr-2"></i>Add Medicine
             </a>
             <a href="{% url 'inventory:low_stock' %}" class="block bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 text-center">
-                Low Stock Alerts
+                <i class="fas fa-exclamation-triangle mr-2"></i>Low Stock Alerts
             </a>
         </div>
     </div>
@@ -55,13 +55,13 @@
         <h2 class="text-xl font-bold mb-4">Sales</h2>
         <div class="space-y-2">
             <a href="{% url 'sales:pos' %}" class="block bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 text-center">
-                Point of Sale (POS)
+                <i class="fas fa-cash-register mr-2"></i>Point of Sale (POS)
             </a>
             <a href="{% url 'sales:list' %}" class="block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-center">
-                View Transactions
+                <i class="fas fa-file-invoice mr-2"></i>View Transactions
             </a>
             <a href="{% url 'sales:customer_list' %}" class="block bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-center">
-                Manage Customers
+                <i class="fas fa-users mr-2"></i>Manage Customers
             </a>
         </div>
     </div>
@@ -69,8 +69,8 @@
     <div class="bg-white rounded-lg shadow-md p-6">
         <h2 class="text-xl font-bold mb-4">Staff</h2>
         <div class="space-y-2">
-            <a href="{% url 'accounts:create_staff' %}" class="block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-center">
-                Add Staff Member
+            <a href="{% url 'users:create_staff' %}" class="block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-center">
+                <i class="fas fa-user-plus mr-2"></i>Add Staff Member
             </a>
         </div>
     </div>

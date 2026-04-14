@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Customer - Smart Pharmacy{% endblock %}
+
+{% block content %}
+<div class="min-h-[80vh] flex items-center justify-center">
+    <div class="max-w-2xl w-full bg-white rounded-lg shadow-md p-8">
+        <h1 class="text-2xl font-bold text-center text-blue-600 mb-6">Add Customer</h1>
+        
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition">
+                Add Customer
+            </button>
+        </form>
+        
+        <p class="text-center mt-4">
+            <a href="{% url 'sales:customer_list' %}" class="text-blue-600 hover:underline">Back to Customers</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

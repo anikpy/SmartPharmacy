@@ -1,20 +1,115 @@
 {% extends 'base.html' %}
 
-{% block title %}Home - Smart Pharmacy{% endblock %}
+{% block title %}Smart Pharmacy - Complete Pharmacy Management System{% endblock %}
 
 {% block content %}
-<div class="min-h-screen flex items-center justify-center">
-    <div class="max-w-md w-full bg-white rounded-lg shadow-md p-8">
-        <h1 class="text-3xl font-bold text-center text-blue-600 mb-8">Smart Pharmacy</h1>
-        <p class="text-center text-gray-600 mb-8">Complete Pharmacy Management System</p>
-        
-        <div class="space-y-4">
-            <a href="{% url 'accounts:login' %}" class="block w-full bg-blue-600 text-white text-center py-3 rounded-lg hover:bg-blue-700 transition">
-                Login
-            </a>
-            <a href="{% url 'accounts:register' %}" class="block w-full bg-gray-200 text-gray-700 text-center py-3 rounded-lg hover:bg-gray-300 transition">
-                Register
-            </a>
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+    <!-- Hero Section -->
+    <div class="container mx-auto px-4 py-16">
+        <div class="max-w-4xl mx-auto text-center">
+            <!-- Logo and Title -->
+            <div class="mb-8 text-center">
+                <div class="mb-6">
+                    <i class="fas fa-pills text-6xl text-blue-600 mb-4"></i>
+                </div>
+                <h1 class="text-5xl md:text-6xl font-bold text-gray-800 mb-4">
+                    Smart <span class="text-blue-600">Pharmacy</span>
+                </h1>
+                <p class="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed">
+                    Professional Pharmacy Management System<br>
+                    <span class="text-blue-600 font-medium">Inventory Management • Point of Sale • Analytics • Multi-tenant</span>
+                </p>
+            </div>
+
+            <!-- Features Grid -->
+            <div class="grid md:grid-cols-3 gap-6 mb-12">
+                <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-users-cog text-4xl text-blue-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Role-Based Access Control</h3>
+                    <p class="text-gray-600 text-sm">Super Admin, Shop Owner, and Shop Worker roles with specific permissions and secure data isolation</p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-cash-register text-4xl text-green-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">High-Speed POS System</h3>
+                    <p class="text-gray-600 text-sm">Keyboard shortcuts optimized point-of-sale with real-time inventory synchronization</p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-boxes text-4xl text-purple-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Smart Inventory Management</h3>
+                    <p class="text-gray-600 text-sm">Stock tracking, expiry alerts, batch management, and automated low stock warnings</p>
+                </div>
+            </div>
+
+            <!-- Call to Action -->
+            <div class="max-w-md mx-auto space-y-4">
+                <a href="{% url 'users:register' %}"
+                   class="block w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-center py-4 px-8 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition font-medium text-lg shadow-lg">
+                    <i class="fas fa-store mr-2"></i>Register Your Pharmacy
+                </a>
+                <a href="{% url 'users:login' %}"
+                   class="block w-full bg-white border-2 border-blue-600 text-blue-600 text-center py-4 px-8 rounded-xl hover:bg-blue-50 transition font-medium text-lg">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Sign In to Dashboard
+                </a>
+            </div>
+
+            <!-- Demo Info -->
+            <div class="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <p class="text-sm text-blue-800 font-medium mb-2"><i class="fas fa-key mr-1"></i> Demo Credentials</p>
+                <div class="text-xs text-blue-700 space-y-1">
+                    <p><strong>Super Admin:</strong> admin / admin123</p>
+                    <p><strong>Shop Owner:</strong> owner1 / pass123</p>
+                    <p><strong>Shop Worker:</strong> worker1 / pass123</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="bg-white py-16">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto">
+                <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Why Choose Smart Pharmacy?</h2>
+
+                <div class="space-y-8">
+                    <div class="flex items-center space-x-6">
+                        <div class="text-4xl text-blue-600">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-gray-800">Enterprise-Grade Security</h4>
+                            <p class="text-gray-600">Complete data isolation between shops with advanced role-based access control and audit trails</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center space-x-6">
+                        <div class="text-4xl text-green-600">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-gray-800">High-Performance POS</h4>
+                            <p class="text-gray-600">Optimized keyboard shortcuts: Ctrl+S (search), Enter (add), F10 (checkout) for maximum efficiency</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center space-x-6">
+                        <div class="text-4xl text-purple-600">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-gray-800">Advanced Business Analytics</h4>
+                            <p class="text-gray-600">Comprehensive sales reports, inventory insights, and data-driven business intelligence</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

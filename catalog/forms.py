@@ -7,19 +7,39 @@ class MasterCatalogForm(forms.ModelForm):
         model = MasterCatalog
         fields = ['brand_name', 'type', 'dosage_form', 'generic', 'strength', 'manufacturer', 'package_container', 'package_size', 'is_active']
         widgets = {
-            'brand_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'type': forms.Select(attrs={'class': 'form-control'}),
-            'dosage_form': forms.Select(attrs={'class': 'form-control'}),
-            'generic': forms.TextInput(attrs={'class': 'form-control'}),
-            'strength': forms.TextInput(attrs={'class': 'form-control'}),
-            'manufacturer': forms.TextInput(attrs={'class': 'form-control'}),
-            'package_container': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
-            'package_size': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+            'brand_name': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500',
+                'placeholder': 'Enter brand name'
+            }),
+            'type': forms.Select(attrs={
+                'class': 'w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
+            }),
+            'dosage_form': forms.Select(attrs={
+                'class': 'w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
+            }),
+            'generic': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500',
+                'placeholder': 'Enter generic name'
+            }),
+            'strength': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500',
+                'placeholder': 'e.g., 500mg, 10ml'
+            }),
+            'manufacturer': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500',
+                'placeholder': 'Enter manufacturer name'
+            }),
+            'package_container': forms.Textarea(attrs={
+                'class': 'w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500',
+                'rows': 2,
+                'placeholder': 'e.g., Strip, Bottle, Box'
+            }),
+            'package_size': forms.Textarea(attrs={
+                'class': 'w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500',
+                'rows': 2,
+                'placeholder': 'e.g., 10 tablets per strip'
+            }),
         }
 
 
-class CSVImportForm(forms.Form):
-    csv_file = forms.FileField(
-        label='Select CSV file',
-        help_text='Upload the medicine.csv file with the correct format'
-    )
+

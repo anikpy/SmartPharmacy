@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block title %}Register Shop - Smart Pharmacy{% endblock %}
+
+{% block content %}
+<div class="min-h-[80vh] flex items-center justify-center">
+    <div class="max-w-2xl w-full bg-white rounded-lg shadow-lg p-8">
+        <div class="text-center mb-6">
+            <i class="fas fa-store text-4xl text-blue-600 mb-3"></i>
+            <h1 class="text-2xl font-bold text-blue-600">Register New Pharmacy</h1>
+            <p class="text-gray-500 mt-2">Add a new pharmacy to the system</p>
+        </div>
+
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+
+            {% if form.errors %}
+                <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <h3 class="text-red-800 font-medium mb-2">Please fix the errors below:</h3>
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}
+                            <p class="text-red-600 text-sm">{{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div>
+                <label class="block text-gray-700 font-medium mb-2">{{ form.name.label }}</label>
+                <div class="relative">
+                    <input type="text" name="{{ form.name.name }}" value="{{ form.name.value|default:'' }}"
+                           class="w-full px-4 py-3 pl-11 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="Enter pharmacy name" required>
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-store text-gray-400"></i>
+                    </div>
+                </div>
+                {% if form.name.errors %}
+                    <p class="text-red-600 text-sm mt-1">{{ form.name.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">{{ form.license_number.label }}</label>
+                    <div class="relative">
+                        <input type="text" name="{{ form.license_number.name }}" value="{{ form.license_number.value|default:'' }}"
+                               class="w-full px-4 py-3 pl-11 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               placeholder="License number" required>
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-certificate text-gray-400"></i>
+                        </div>
+                    </div>
+                    {% if form.license_number.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ form.license_number.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">{{ form.dgda_license.label }}</label>
+                    <div class="relative">
+                        <input type="text" name="{{ form.dgda_license.name }}" value="{{ form.dgda_license.value|default:'' }}"
+                               class="w-full px-4 py-3 pl-11 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               placeholder="DGDA license number (optional)">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-id-badge text-gray-400"></i>
+                        </div>
+                    </div>
+                    {% if form.dgda_license.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ form.dgda_license.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-gray-700 font-medium mb-2">{{ form.address.label }}</label>
+                <div class="relative">
+                    <textarea name="{{ form.address.name }}" rows="3"
+                              class="w-full px-4 py-3 pl-11 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="Complete address" required>{{ form.address.value|default:'' }}</textarea>
+                    <div class="absolute top-3 left-0 pl-3 flex items-start pointer-events-none">
+                        <i class="fas fa-map-marker-alt text-gray-400 mt-1"></i>
+                    </div>
+                </div>
+                {% if form.address.errors %}
+                    <p class="text-red-600 text-sm mt-1">{{ form.address.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">{{ form.phone.label }}</label>
+                    <div class="relative">
+                        <input type="tel" name="{{ form.phone.name }}" value="{{ form.phone.value|default:'' }}"
+                               class="w-full px-4 py-3 pl-11 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               placeholder="Phone number" required>
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-phone text-gray-400"></i>
+                        </div>
+                    </div>
+                    {% if form.phone.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ form.phone.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">{{ form.email.label }}</label>
+                    <div class="relative">
+                        <input type="email" name="{{ form.email.name }}" value="{{ form.email.value|default:'' }}"
+                               class="w-full px-4 py-3 pl-11 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               placeholder="Email address" required>
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-envelope text-gray-400"></i>
+                        </div>
+                    </div>
+                    {% if form.email.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ form.email.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="flex gap-4 pt-4">
+                <button type="submit" class="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-medium">
+                    <i class="fas fa-save mr-2"></i>Register Pharmacy
+                </button>
+                <a href="{% url 'dashboard:super_admin' %}" class="flex-1 bg-gray-200 text-gray-700 text-center py-3 rounded-lg hover:bg-gray-300 transition font-medium">
+                    <i class="fas fa-arrow-left mr-2"></i>Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -37,19 +37,19 @@
             <li class="text-gray-500">No shops registered yet</li>
             {% endfor %}
         </ul>
-        <a href="{% url 'accounts:register_shop' %}" class="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-            Register New Shop
+        <a href="{% url 'users:register_shop' %}" class="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+            <i class="fas fa-plus mr-2"></i>Register New Shop
         </a>
     </div>
-    
+
     <div class="bg-white rounded-lg shadow-md p-6">
         <h2 class="text-xl font-bold mb-4">Quick Actions</h2>
         <div class="space-y-3">
             <a href="{% url 'catalog:list' %}" class="block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-center">
-                Manage Master Catalog
+                <i class="fas fa-pills mr-2"></i>Manage Master Catalog
             </a>
-            <a href="{% url 'catalog:import_csv' %}" class="block bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-center">
-                Import CSV
+            <a href="{% url 'users:register_shop' %}" class="block bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-center">
+                <i class="fas fa-store mr-2"></i>Register New Shop
             </a>
         </div>
     </div>

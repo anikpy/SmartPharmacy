@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt - {{ transaction.invoice_number }}</title>
+    <style>
+        @media print {
+            body { margin: 0; }
+            .no-print { display: none; }
+        }
+        
+        .receipt {
+            width: 80mm;
+            max-width: 300px;
+            margin: 0 auto;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.3;
+            background: white;
+            border: 1px solid #ddd;
+        }
+        
+        .shop-header {
+            text-align: center;
+            border-bottom: 1px dashed #333;
+            padding-bottom: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .shop-name {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+        
+        .shop-details {
+            font-size: 10px;
+            line-height: 1.2;
+        }
+        
+        .receipt-header {
+            text-align: center;
+            margin: 8px 0;
+            padding: 5px 0;
+            border-bottom: 1px solid #333;
+        }
+        
+        .receipt-title {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .transaction-info {
+            margin: 5px 0;
+            font-size: 10px;
+        }
+        
+        .items-table {
+            width: 100%;
+            margin: 8px 0;
+        }
+        
+        .items-table th,
+        .items-table td {
+            padding: 2px 0;
+            text-align: left;
+            font-size: 10px;
+        }
+        
+        .items-table th {
+            border-bottom: 1px solid #333;
+            font-weight: bold;
+        }
+        
+        .item-row {
+            border-bottom: 1px dotted #999;
+        }
+        
+        .item-name {
+            font-weight: bold;
+        }
+        
+        .item-details {
+            font-size: 9px;
+            color: #666;
+        }
+        
+        .qty-price {
+            text-align: right;
+        }
+        
+        .discount-row {
+            color: #d63384;
+            font-style: italic;
+        }
+        
+        .totals {
+            border-top: 1px solid #333;
+            margin-top: 8px;
+            padding-top: 5px;
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 2px 0;
+        }
+        
+        .grand-total {
+            font-weight: bold;
+            font-size: 13px;
+            border-top: 1px solid #333;
+            margin-top: 5px;
+            padding-top: 5px;
+        }
+        
+        .payment-info {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed #333;
+            font-size: 10px;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px dashed #333;
+            font-size: 9px;
+        }
+        
+        .print-button {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .btn-print {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .btn-print:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt">
+        <!-- Shop Header -->
+        <div class="shop-header">
+            <div class="shop-name">{{ transaction.shop.name|upper }}</div>
+            <div class="shop-details">
+                {{ transaction.shop.address }}<br>
+                Tel: {{ transaction.shop.phone }}<br>
+                {% if transaction.shop.email %}Email: {{ transaction.shop.email }}<br>{% endif %}
+                {% if transaction.shop.license_number %}License: {{ transaction.shop.license_number }}{% endif %}
+            </div>
+        </div>
+
+        <!-- Receipt Header -->
+        <div class="receipt-header">
+            <div class="receipt-title">CASH MEMO</div>
+        </div>
+
+        <!-- Transaction Info -->
+        <div class="transaction-info">
+            <div style="display: flex; justify-content: space-between;">
+                <span>Invoice: {{ transaction.invoice_number }}</span>
+                <span>{{ transaction.created_at|date:"d/m/Y H:i" }}</span>
+            </div>
+            {% if transaction.customer_name %}
+            <div style="margin-top: 3px;">
+                Customer: {{ transaction.customer_name }}
+                {% if transaction.customer_phone %} ({{ transaction.customer_phone }}){% endif %}
+            </div>
+            {% endif %}
+            <div style="margin-top: 3px;">Served by: {{ transaction.created_by.get_full_name|default:transaction.created_by.username }}</div>
+        </div>
+
+        <!-- Items -->
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th style="width: 60%;">Item</th>
+                    <th style="width: 15%; text-align: right;">Qty</th>
+                    <th style="width: 25%; text-align: right;">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in transaction.items.all %}
+                <tr class="item-row">
+                    <td>
+                        <div class="item-name">{{ item.medicine_name }}</div>
+                        {% if item.strength %}<div class="item-details">{{ item.strength }}</div>{% endif %}
+                        {% if item.generic_name and item.generic_name != item.medicine_name %}
+                            <div class="item-details">{{ item.generic_name }}</div>
+                        {% endif %}
+                        <div class="item-details">@ {{ item.unit_price|floatformat:2 }}/unit</div>
+                        {% if item.item_discount_amount > 0 %}
+                            <div class="item-details discount-row">
+                                Item Disc: -{{ item.item_discount_amount|floatformat:2 }}
+                                {% if item.item_discount_percentage > 0 %}({{ item.item_discount_percentage }}%){% endif %}
+                            </div>
+                        {% endif %}
+                    </td>
+                    <td class="qty-price">{{ item.quantity }}</td>
+                    <td class="qty-price">{{ item.total_after_discount|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Totals -->
+        <div class="totals">
+            <div class="total-row">
+                <span>Subtotal:</span>
+                <span>{{ transaction.subtotal|floatformat:2 }}</span>
+            </div>
+            
+            {% if transaction.total_discount > 0 %}
+            <div class="total-row discount-row">
+                <span>Total Discount:</span>
+                <span>-{{ transaction.total_discount|floatformat:2 }}</span>
+            </div>
+            {% endif %}
+            
+            {% if transaction.tax_amount > 0 %}
+            <div class="total-row">
+                <span>Tax:</span>
+                <span>{{ transaction.tax_amount|floatformat:2 }}</span>
+            </div>
+            {% endif %}
+            
+            <div class="total-row grand-total">
+                <span>TOTAL:</span>
+                <span>৳{{ transaction.total_amount|floatformat:2 }}</span>
+            </div>
+        </div>
+
+        <!-- Payment Info -->
+        <div class="payment-info">
+            <div style="display: flex; justify-content: space-between;">
+                <span>Payment:</span>
+                <span>{{ transaction.get_payment_method_display }}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span>Amount Paid:</span>
+                <span>৳{{ transaction.amount_paid|floatformat:2 }}</span>
+            </div>
+            {% if transaction.change_given > 0 %}
+            <div style="display: flex; justify-content: space-between;">
+                <span>Change:</span>
+                <span>৳{{ transaction.change_given|floatformat:2 }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div>Thank you for your business!</div>
+            <div style="margin-top: 5px;">*** COMPUTERIZED RECEIPT ***</div>
+            {% if transaction.notes %}
+            <div style="margin-top: 5px; font-style: italic;">{{ transaction.notes }}</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Print Button (hidden when printing) -->
+    <div class="print-button no-print">
+        <button class="btn-print" onclick="window.print()">🖨️ Print Receipt</button>
+        <button class="btn-print" onclick="window.close()" style="background: #6c757d;">Close</button>
+    </div>
+
+    <script>
+        // Auto-print when page loads (optional)
+        // window.onload = function() { window.print(); }
+    </script>
+</body>
+</html>

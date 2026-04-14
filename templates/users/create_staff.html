@@ -1,19 +1,17 @@
 {% extends 'base.html' %}
 
-{% block title %}Register - Smart Pharmacy{% endblock %}
+{% block title %}Create Staff - Smart Pharmacy{% endblock %}
 
 {% block content %}
 <div class="min-h-[80vh] flex items-center justify-center">
     <div class="max-w-lg w-full bg-white rounded-lg shadow-lg p-8">
         <div class="text-center mb-6">
-            <div class="text-4xl text-blue-600 mb-2">
-                <i class="fas fa-pills"></i>
-            </div>
-            <h1 class="text-2xl font-bold text-blue-600">Create Account</h1>
-            <p class="text-gray-500 mt-2">Join Smart Pharmacy today</p>
+            <i class="fas fa-user-plus text-4xl text-blue-600 mb-3"></i>
+            <h1 class="text-2xl font-bold text-blue-600">Create Staff Account</h1>
+            <p class="text-gray-500 mt-2">Add a new staff member to your pharmacy</p>
         </div>
 
-        <form method="post" class="space-y-4">
+        <form method="post" class="space-y-6">
             {% csrf_token %}
 
             {% if form.errors %}
@@ -32,13 +30,19 @@
                     <label class="block text-gray-700 font-medium mb-2">{{ form.first_name.label }}</label>
                     <input type="text" name="{{ form.first_name.name }}" value="{{ form.first_name.value|default:'' }}"
                            class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                           placeholder="First Name" {% if form.first_name.field.required %}required{% endif %}>
+                           placeholder="First Name">
+                    {% if form.first_name.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ form.first_name.errors.0 }}</p>
+                    {% endif %}
                 </div>
                 <div>
                     <label class="block text-gray-700 font-medium mb-2">{{ form.last_name.label }}</label>
                     <input type="text" name="{{ form.last_name.name }}" value="{{ form.last_name.value|default:'' }}"
                            class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                           placeholder="Last Name" {% if form.last_name.field.required %}required{% endif %}>
+                           placeholder="Last Name">
+                    {% if form.last_name.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ form.last_name.errors.0 }}</p>
+                    {% endif %}
                 </div>
             </div>
 
@@ -52,6 +56,9 @@
                         <i class="fas fa-user text-gray-400"></i>
                     </div>
                 </div>
+                {% if form.username.errors %}
+                    <p class="text-red-600 text-sm mt-1">{{ form.username.errors.0 }}</p>
+                {% endif %}
             </div>
 
             <div>
@@ -64,6 +71,9 @@
                         <i class="fas fa-envelope text-gray-400"></i>
                     </div>
                 </div>
+                {% if form.email.errors %}
+                    <p class="text-red-600 text-sm mt-1">{{ form.email.errors.0 }}</p>
+                {% endif %}
             </div>
 
             <div>
@@ -76,15 +86,9 @@
                         <i class="fas fa-phone text-gray-400"></i>
                     </div>
                 </div>
-            </div>
-
-            <div>
-                <label class="block text-gray-700 font-medium mb-2">{{ form.role.label }}</label>
-                <select name="{{ form.role.name }}" class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    {% for value, label in form.role.field.choices %}
-                        <option value="{{ value }}" {% if form.role.value == value %}selected{% endif %}>{{ label }}</option>
-                    {% endfor %}
-                </select>
+                {% if form.phone.errors %}
+                    <p class="text-red-600 text-sm mt-1">{{ form.phone.errors.0 }}</p>
+                {% endif %}
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -98,6 +102,9 @@
                             <i class="fas fa-lock text-gray-400"></i>
                         </div>
                     </div>
+                    {% if form.password1.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ form.password1.errors.0 }}</p>
+                    {% endif %}
                 </div>
                 <div>
                     <label class="block text-gray-700 font-medium mb-2">{{ form.password2.label }}</label>
@@ -109,19 +116,28 @@
                             <i class="fas fa-lock text-gray-400"></i>
                         </div>
                     </div>
+                    {% if form.password2.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ form.password2.errors.0 }}</p>
+                    {% endif %}
                 </div>
             </div>
 
-            <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-medium text-lg">
-                Create Account
-            </button>
-        </form>
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <p class="text-sm text-blue-800">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    This staff member will be automatically assigned the Shop Worker role and will have access to the POS terminal.
+                </p>
+            </div>
 
-        <div class="text-center mt-6 pt-4 border-t">
-            <p class="text-gray-600">Already have an account?
-                <a href="{% url 'users:login' %}" class="text-blue-600 hover:underline font-medium">Sign In</a>
-            </p>
-        </div>
+            <div class="flex gap-4">
+                <button type="submit" class="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-medium">
+                    <i class="fas fa-user-plus mr-2"></i>Create Staff Account
+                </button>
+                <a href="{% url 'dashboard:shop_owner' %}" class="flex-1 bg-gray-200 text-gray-700 text-center py-3 rounded-lg hover:bg-gray-300 transition font-medium">
+                    <i class="fas fa-arrow-left mr-2"></i>Cancel
+                </a>
+            </div>
+        </form>
     </div>
 </div>
 {% endblock %}

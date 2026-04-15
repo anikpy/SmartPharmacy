@@ -19,8 +19,12 @@ def super_admin_dashboard(request):
     total_medicines = MasterCatalog.objects.filter(is_active=True).count()
     total_users = User.objects.count()
     
-    # Recent shops
-    recent_shops = Shop.objects.filter(is_active=True).order_by('-created_at')[:5]
+    # Recent shops with their owners
+    recent_shops = Shop.objects.filter(is_active=True).prefetch_related('staff').order_by('-created_at')[:5]
+    
+    # Get shop owners for each shop
+    for shop in recent_shops:
+        shop.owner = User.objects.filter(shop=shop, role=settings.ROLE_SHOP_OWNER).first()
     
     # User distribution by role
     user_distribution = {

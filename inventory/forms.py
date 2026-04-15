@@ -1,5 +1,5 @@
 from django import forms
-from .models import ShopInventory
+from .models import ShopInventory, ShopCustomMedicineInventory
 from catalog.models import MasterCatalog
 
 
@@ -42,3 +42,52 @@ class AddToInventoryForm(forms.Form):
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         label='Batch Number'
     )
+
+
+class ShopCustomMedicineInventoryForm(forms.ModelForm):
+    class Meta:
+        model = ShopCustomMedicineInventory
+        fields = ['custom_medicine', 'local_price', 'stock_quantity', 'expiry_date', 'batch_number', 'low_stock_threshold']
+        widgets = {
+            'local_price': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+            'stock_quantity': forms.NumberInput(attrs={'class': 'form-control'}),
+            'expiry_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'batch_number': forms.TextInput(attrs={'class': 'form-control'}),
+            'low_stock_threshold': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
+
+
+class AddCustomMedicineToInventoryForm(forms.Form):
+    """Form to add custom medicine to shop inventory"""
+    custom_medicine = forms.ModelChoiceField(
+        queryset=None,
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        label='Select Custom Medicine'
+    )
+    local_price = forms.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+        label='Local Price'
+    )
+    stock_quantity = forms.IntegerField(
+        widget=forms.NumberInput(attrs={'class': 'form-control'}),
+        label='Stock Quantity'
+    )
+    expiry_date = forms.DateField(
+        widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+        label='Expiry Date'
+    )
+    batch_number = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label='Batch Number'
+    )
+
+    def __init__(self, shop, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from .models import ShopCustomMedicine
+        self.fields['custom_medicine'].queryset = ShopCustomMedicine.objects.filter(
+            shop=shop,
+            is_active=True
+        )

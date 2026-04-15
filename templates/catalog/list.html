@@ -11,6 +11,9 @@
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-3xl font-bold text-blue-600">Master Catalog</h1>
         <div class="space-x-2">
+            <a href="{% url 'catalog:custom_medicines_list' %}" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">
+                <i class="fas fa-list mr-2"></i>View Custom Medicines
+            </a>
             <a href="{% url 'catalog:create' %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
                 <i class="fas fa-plus mr-2"></i>Add Medicine
             </a>

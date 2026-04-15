@@ -1,24 +1,362 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}{{ action }} Inventory - Smart Pharmacy{% endblock %}
+{% block title %}{{ action }} Medicine to Inventory - Smart Pharmacy{% endblock %}
 
 {% block content %}
-<div class="max-w-2xl mx-auto">
-    <h1 class="text-3xl font-bold text-blue-600 mb-6">{{ action }} Medicine to Inventory</h1>
-    
-    <div class="bg-white rounded-lg shadow-md p-6">
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <div class="flex gap-4 mt-6">
-                <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
-                    {{ action }}
-                </button>
-                <a href="{% url 'inventory:list' %}" class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300">
-                    Cancel
-                </a>
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="flex items-center mb-4">
+                <i class="fas fa-pills text-3xl text-indigo-600 mr-3"></i>
+                <h1 class="text-4xl font-bold text-gray-800">{{ action }} Medicine to Inventory</h1>
             </div>
-        </form>
+            <p class="text-gray-600">Manage your pharmacy's medicine stock with ease</p>
+        </div>
+
+        <!-- Main Form Card -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <form method="post" id="inventoryForm" class="p-8">
+                {% csrf_token %}
+
+                <!-- Error Messages -->
+                {% if form.non_field_errors %}
+                    <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded">
+                        <h3 class="text-red-800 font-semibold mb-2">⚠️ Error</h3>
+                        {% for error in form.non_field_errors %}
+                            <p class="text-red-700">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- Medicine Selection Section -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-search text-indigo-600 mr-2"></i>
+                        Select Medicine
+                    </h2>
+
+                    <div class="space-y-4">
+                        <!-- Search Input with Autocomplete -->
+                        <div class="relative">
+                            <label for="medicineSearch" class="block text-sm font-medium text-gray-700 mb-2">
+                                Medicine Name <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <input
+                                    type="text"
+                                    id="medicineSearch"
+                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition"
+                                    placeholder="Type medicine name (e.g., Aspirin, Paracetamol...)"
+                                    autocomplete="off"
+                                    required
+                                >
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-spinner fa-spin text-indigo-600 hidden" id="searchLoader"></i>
+                                    <i class="fas fa-search text-gray-400"></i>
+                                </div>
+                            </div>
+
+                            <!-- Autocomplete Dropdown -->
+                            <div id="medicineDropdown" class="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 hidden max-h-64 overflow-y-auto">
+                                <div id="medicineList" class="divide-y"></div>
+                            </div>
+                        </div>
+
+                        <!-- Hidden Input for Selected Medicine -->
+                        <input type="hidden" id="medicineId" name="master_medicine" required>
+                        <input type="hidden" id="medicineStrength" value="">
+                        <input type="hidden" id="medicineManufacturer" value="">
+                        <input type="hidden" id="medicineType" value="">
+                        <input type="hidden" id="medicineDosageForm" value="">
+
+                        <!-- Selected Medicine Info Card -->
+                        <div id="selectedMedicineCard" class="hidden p-4 bg-indigo-50 border-l-4 border-indigo-500 rounded-lg">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-xs text-gray-600">Brand Name</p>
+                                    <p id="selectedBrandName" class="font-semibold text-gray-800"></p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-600">Generic Name</p>
+                                    <p id="selectedGenericName" class="font-semibold text-gray-800"></p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-600">Strength</p>
+                                    <p id="selectedStrength" class="font-semibold text-gray-800"></p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-600">Dosage Form</p>
+                                    <p id="selectedDosageForm" class="font-semibold text-gray-800"></p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-600">Manufacturer</p>
+                                    <p id="selectedManufacturer" class="font-semibold text-gray-800"></p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-600">Type</p>
+                                    <p id="selectedType" class="font-semibold text-gray-800"></p>
+                                </div>
+                                <div class="col-span-2 bg-green-100 p-3 rounded border-l-4 border-green-500">
+                                    <p class="text-xs text-green-700">💰 Suggested Master Price</p>
+                                    <p id="selectedPrice" class="font-semibold text-green-800 text-lg"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form errors for master_medicine -->
+                        {% if form.master_medicine.errors %}
+                            <div class="text-red-600 text-sm mt-2">
+                                {% for error in form.master_medicine.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Medicine Details Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <!-- Local Price -->
+                    <div>
+                        <label for="{{ form.local_price.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-tag text-green-600 mr-2"></i>Local Price <span class="text-red-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-3 text-gray-500">৳</span>
+                            <input
+                                type="number"
+                                name="local_price"
+                                id="{{ form.local_price.id_for_label }}"
+                                step="0.01"
+                                placeholder="0.00"
+                                class="w-full pl-8 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition"
+                                required
+                            >
+                        </div>
+                        {% if form.local_price.errors %}
+                            <div class="text-red-600 text-sm mt-1">{{ form.local_price.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Stock Quantity -->
+                    <div>
+                        <label for="{{ form.stock_quantity.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-box text-blue-600 mr-2"></i>Stock Quantity <span class="text-red-500">*</span>
+                        </label>
+                        <input
+                            type="number"
+                            name="stock_quantity"
+                            id="{{ form.stock_quantity.id_for_label }}"
+                            placeholder="0"
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition"
+                            required
+                        >
+                        {% if form.stock_quantity.errors %}
+                            <div class="text-red-600 text-sm mt-1">{{ form.stock_quantity.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Expiry Date -->
+                    <div>
+                        <label for="{{ form.expiry_date.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-calendar-times text-red-600 mr-2"></i>Expiry Date <span class="text-red-500">*</span>
+                        </label>
+                        <input
+                            type="date"
+                            name="expiry_date"
+                            id="{{ form.expiry_date.id_for_label }}"
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition"
+                            required
+                        >
+                        {% if form.expiry_date.errors %}
+                            <div class="text-red-600 text-sm mt-1">{{ form.expiry_date.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Batch Number -->
+                    <div>
+                        <label for="{{ form.batch_number.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-barcode text-purple-600 mr-2"></i>Batch Number <span class="text-red-500">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            name="batch_number"
+                            id="{{ form.batch_number.id_for_label }}"
+                            placeholder="e.g., BATCH-2024-001"
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition"
+                            required
+                        >
+                        {% if form.batch_number.errors %}
+                            <div class="text-red-600 text-sm mt-1">{{ form.batch_number.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex gap-4 pt-6 border-t border-gray-200">
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white px-6 py-3 rounded-lg hover:from-indigo-700 hover:to-indigo-800 transition font-semibold flex items-center justify-center gap-2 shadow-lg">
+                        <i class="fas fa-check-circle"></i>
+                        {{ action }} to Inventory
+                    </button>
+                    <a href="{% url 'inventory:list' %}" class="flex-1 bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300 transition font-semibold flex items-center justify-center gap-2">
+                        <i class="fas fa-times-circle"></i>
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Info Box -->
+        <div class="mt-8 p-4 bg-indigo-50 border-l-4 border-indigo-500 rounded-lg">
+            <p class="text-indigo-800 text-sm">
+                <i class="fas fa-info-circle mr-2"></i>
+                <strong>Tip:</strong> Start typing to search from master catalog or your custom medicines. Not found? <a href="{% url 'inventory:add_custom' %}" class="underline font-semibold">Add as custom medicine</a>
+            </p>
+        </div>
     </div>
 </div>
+
+<style>
+    /* Smooth transitions */
+    input, select, textarea {
+        transition: all 0.3s ease;
+    }
+
+    /* Autocomplete styling */
+    #medicineDropdown .medicine-option {
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    #medicineDropdown .medicine-option:hover {
+        background-color: #f3f4f6;
+    }
+
+    #medicineDropdown .medicine-option.active {
+        background-color: #e0e7ff;
+        border-left: 3px solid #4f46e5;
+    }
+
+    /* Highlight search term in dropdown */
+    .medicine-option .highlight {
+        font-weight: 600;
+        color: #4f46e5;
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const medicineSearch = document.getElementById('medicineSearch');
+    const medicineDropdown = document.getElementById('medicineDropdown');
+    const medicineList = document.getElementById('medicineList');
+    const medicineId = document.getElementById('medicineId');
+    const selectedMedicineCard = document.getElementById('selectedMedicineCard');
+    const searchLoader = document.getElementById('searchLoader');
+    let debounceTimer;
+
+    // Search medicines
+    medicineSearch.addEventListener('input', function() {
+        const query = this.value.trim();
+        clearTimeout(debounceTimer);
+
+        if (query.length < 1) {
+            medicineDropdown.classList.add('hidden');
+            medicineList.innerHTML = '';
+            return;
+        }
+
+        searchLoader.classList.remove('hidden');
+        debounceTimer = setTimeout(() => {
+            fetch(`{% url 'inventory:search_catalog' %}?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    searchLoader.classList.add('hidden');
+                    medicineList.innerHTML = '';
+
+                    if (data.results.length === 0) {
+                        medicineList.innerHTML = '<div class="p-4 text-gray-500 text-center">No medicines found</div>';
+                        medicineDropdown.classList.remove('hidden');
+                        return;
+                    }
+
+                    data.results.forEach(medicine => {
+                        const option = document.createElement('div');
+                        option.className = 'medicine-option';
+                        const sourceLabel = medicine.source === 'custom' ? '🏪 Your Medicine' : '💊 Master Catalog';
+                        const sourceColor = medicine.source === 'custom' ? 'text-purple-600' : 'text-blue-600';
+                        option.innerHTML = `
+                            <div class="font-semibold text-gray-800">${medicine.brand_name}</div>
+                            <div class="text-sm text-gray-600">
+                                <span>${medicine.generic}</span> |
+                                <span>${medicine.strength}</span> |
+                                <span>${medicine.dosage_form}</span>
+                            </div>
+                            <div class="text-xs text-gray-500 mt-1">${medicine.manufacturer}</div>
+                            <div class="text-xs ${sourceColor} font-semibold mt-1">${sourceLabel} | ৳${medicine.suggested_price}</div>
+                        `;
+                        option.onclick = () => selectMedicine(medicine);
+                        medicineList.appendChild(option);
+                    });
+
+                    medicineDropdown.classList.remove('hidden');
+                })
+                .catch(error => {
+                    searchLoader.classList.add('hidden');
+                    console.error('Error:', error);
+                });
+        }, 300);
+    });
+
+    // Select medicine
+    function selectMedicine(medicine) {
+        medicineSearch.value = medicine.brand_name;
+        medicineId.value = medicine.id;
+
+        // Store hidden values
+        document.getElementById('medicineStrength').value = medicine.strength;
+        document.getElementById('medicineManufacturer').value = medicine.manufacturer;
+        document.getElementById('medicineType').value = medicine.type;
+        document.getElementById('medicineDosageForm').value = medicine.dosage_form;
+
+        // Display selected medicine info
+        document.getElementById('selectedBrandName').textContent = medicine.brand_name;
+        document.getElementById('selectedGenericName').textContent = medicine.generic;
+        document.getElementById('selectedStrength').textContent = medicine.strength;
+        document.getElementById('selectedDosageForm').textContent = medicine.dosage_form;
+        document.getElementById('selectedManufacturer').textContent = medicine.manufacturer;
+        document.getElementById('selectedType').textContent = medicine.type.charAt(0).toUpperCase() + medicine.type.slice(1);
+
+        // Display suggested price
+        document.getElementById('selectedPrice').textContent = '৳' + medicine.suggested_price;
+
+        // Auto-fill local price with suggested price
+        const localPriceInput = document.querySelector('input[name="local_price"]');
+        if (localPriceInput && medicine.suggested_price) {
+            localPriceInput.value = medicine.suggested_price;
+        }
+
+        selectedMedicineCard.classList.remove('hidden');
+        medicineDropdown.classList.add('hidden');
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('#medicineSearch') && !event.target.closest('#medicineDropdown')) {
+            medicineDropdown.classList.add('hidden');
+        }
+    });
+
+    // Form submission
+    document.getElementById('inventoryForm').addEventListener('submit', function(e) {
+        if (!medicineId.value) {
+            e.preventDefault();
+            alert('Please select a medicine from the list');
+            medicineSearch.focus();
+        }
+    });
+});
+</script>
 {% endblock %}

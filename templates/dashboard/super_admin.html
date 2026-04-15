@@ -30,7 +30,15 @@
         <ul class="space-y-2">
             {% for shop in recent_shops %}
             <li class="flex justify-between items-center py-2 border-b">
-                <span>{{ shop.name }}</span>
+                <div>
+                    <span class="font-medium">{{ shop.name }}</span>
+                    {% if shop.owner %}
+                    <p class="text-sm text-gray-500">Owner: {{ shop.owner.first_name }} {{ shop.owner.last_name }}</p>
+                    <p class="text-sm text-gray-500">Email: {{ shop.owner.email }}</p>
+                    {% else %}
+                    <p class="text-sm text-red-500">No owner assigned</p>
+                    {% endif %}
+                </div>
                 <span class="text-sm text-gray-500">{{ shop.created_at|date:"M d, Y" }}</span>
             </li>
             {% empty %}
@@ -48,8 +56,8 @@
             <a href="{% url 'catalog:list' %}" class="block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-center">
                 <i class="fas fa-pills mr-2"></i>Manage Master Catalog
             </a>
-            <a href="{% url 'users:register_shop' %}" class="block bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-center">
-                <i class="fas fa-store mr-2"></i>Register New Shop
+            <a href="{% url 'users:register_shop_with_owner' %}" class="block bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-center">
+                <i class="fas fa-store mr-2"></i>Register Shop with Owner
             </a>
         </div>
     </div>

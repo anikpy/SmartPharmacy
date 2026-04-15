@@ -5,9 +5,14 @@
 {% block content %}
 <div class="flex justify-between items-center mb-6">
     <h1 class="text-3xl font-bold text-blue-600">Shop Inventory</h1>
-    <a href="{% url 'inventory:add' %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-        Add Medicine
-    </a>
+    <div class="flex gap-2">
+        <a href="{% url 'inventory:add' %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+            Add Master Medicine
+        </a>
+        <a href="{% url 'inventory:custom_inventory_add' %}" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">
+            Add Custom Medicine
+        </a>
+    </div>
 </div>
 
 <div class="bg-white rounded-lg shadow-md p-6 mb-6">
@@ -20,10 +25,22 @@
 </div>
 
 <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+    <div class="flex gap-2 mb-4">
+        <a href="?source=all{% if query %}&q={{ query }}{% endif %}" class="px-4 py-2 rounded-lg {% if source == 'all' or not source %}bg-blue-600 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
+            All
+        </a>
+        <a href="?source=master{% if query %}&q={{ query }}{% endif %}" class="px-4 py-2 rounded-lg {% if source == 'master' %}bg-blue-600 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
+            Master Catalog
+        </a>
+        <a href="?source=custom{% if query %}&q={{ query }}{% endif %}" class="px-4 py-2 rounded-lg {% if source == 'custom' %}bg-purple-600 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
+            Custom Medicines
+        </a>
+    </div>
     <form method="get" class="flex gap-2">
-        <input 
-            type="text" 
-            name="q" 
+        <input type="hidden" name="source" value="{{ source }}">
+        <input
+            type="text"
+            name="q"
             value="{{ query }}"
             class="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Search inventory..."
@@ -50,8 +67,20 @@
         <tbody class="divide-y divide-gray-200">
             {% for item in page_obj %}
             <tr class="hover:bg-gray-50 {% if item.is_low_stock %}bg-red-50{% endif %}">
-                <td class="px-6 py-4 whitespace-nowrap font-medium">{{ item.master_medicine.brand_name }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ item.master_medicine.generic }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center gap-2">
+                        {% if item.master_medicine %}
+                            <span class="font-medium">{{ item.master_medicine.brand_name }}</span>
+                            <span class="px-2 py-1 text-xs rounded bg-blue-100 text-blue-800">Master</span>
+                        {% else %}
+                            <span class="font-medium">{{ item.custom_medicine.brand_name }}</span>
+                            <span class="px-2 py-1 text-xs rounded bg-purple-100 text-purple-800">Custom</span>
+                        {% endif %}
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    {% if item.master_medicine %}{{ item.master_medicine.generic }}{% else %}{{ item.custom_medicine.generic }}{% endif %}
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                     <span class="{% if item.is_low_stock %}text-red-600 font-bold{% endif %}">
                         {{ item.stock_quantity }}
@@ -64,8 +93,13 @@
                 <td class="px-6 py-4 whitespace-nowrap">{{ item.expiry_date|date:"Y-m-d" }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">{{ item.batch_number }}</td>
                 <td class="px-6 py-4 whitespace-nowrap space-x-2">
-                    <a href="{% url 'inventory:update' item.pk %}" class="text-blue-600 hover:text-blue-800">Edit</a>
-                    <a href="{% url 'inventory:delete' item.pk %}" class="text-red-600 hover:text-red-800">Delete</a>
+                    {% if item.master_medicine %}
+                        <a href="{% url 'inventory:update' item.pk %}" class="text-blue-600 hover:text-blue-800">Edit</a>
+                        <a href="{% url 'inventory:delete' item.pk %}" class="text-red-600 hover:text-red-800">Delete</a>
+                    {% else %}
+                        <a href="{% url 'inventory:custom_inventory_update' item.pk %}" class="text-blue-600 hover:text-blue-800">Edit</a>
+                        <a href="{% url 'inventory:custom_inventory_delete' item.pk %}" class="text-red-600 hover:text-red-800">Delete</a>
+                    {% endif %}
                 </td>
             </tr>
             {% empty %}

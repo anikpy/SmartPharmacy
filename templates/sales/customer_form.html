@@ -3,21 +3,57 @@
 {% block title %}Add Customer - Smart Pharmacy{% endblock %}
 
 {% block content %}
-<div class="min-h-[80vh] flex items-center justify-center">
-    <div class="max-w-2xl w-full bg-white rounded-lg shadow-md p-8">
-        <h1 class="text-2xl font-bold text-center text-blue-600 mb-6">Add Customer</h1>
-        
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition">
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+    <div class="max-w-2xl mx-auto">
+        <!-- Header -->
+        <div class="mb-6">
+            <h1 class="text-3xl font-bold text-gray-800 flex items-center gap-3">
+                <i class="fas fa-user-plus text-indigo-600"></i>
                 Add Customer
-            </button>
-        </form>
-        
-        <p class="text-center mt-4">
-            <a href="{% url 'sales:customer_list' %}" class="text-blue-600 hover:underline">Back to Customers</a>
-        </p>
+            </h1>
+            <p class="text-gray-600 mt-1">Create a new customer profile</p>
+        </div>
+
+        <!-- Form Card -->
+        <div class="bg-white rounded-xl shadow-lg p-8">
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+
+                <!-- Customer Name -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-user text-indigo-600 mr-2"></i>Customer Name
+                    </label>
+                    {{ form.name }}
+                </div>
+
+                <!-- Phone -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-phone text-indigo-600 mr-2"></i>Phone Number
+                    </label>
+                    {{ form.phone }}
+                </div>
+
+                <!-- Address -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-map-marker-alt text-indigo-600 mr-2"></i>Address
+                    </label>
+                    {{ form.address }}
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex gap-4">
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white py-3 rounded-lg hover:from-indigo-700 hover:to-indigo-800 transition font-semibold shadow-md">
+                        <i class="fas fa-plus-circle mr-2"></i>Add Customer
+                    </button>
+                    <a href="{% url 'sales:customer_list' %}" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg hover:bg-gray-300 transition font-semibold text-center">
+                        <i class="fas fa-arrow-left mr-2"></i>Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}

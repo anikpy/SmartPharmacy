@@ -10,106 +10,221 @@
     .cart-item:hover {
         background-color: #f3f4f6;
     }
+    .search-result {
+        transition: all 0.2s;
+    }
+    .search-result:hover {
+        background-color: #e0e7ff;
+        border-left: 3px solid #4f46e5;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="flex gap-6">
-    <!-- Search and Add Items -->
-    <div class="w-2/3">
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-            <h2 class="text-xl font-bold mb-4">Search Medicines</h2>
-            <div class="flex gap-2">
-                <input 
-                    type="text" 
-                    id="search-input" 
-                    class="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Search medicines... (Ctrl+S)"
-                    autocomplete="off"
-                >
-                <input 
-                    type="number" 
-                    id="quantity-input" 
-                    class="w-24 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Qty"
-                    value="1"
-                    min="1"
-                >
-                <button 
-                    id="add-btn" 
-                    class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
-                >
-                    Add (Enter)
-                </button>
-            </div>
-            <div id="search-results" class="mt-4 hidden">
-                <!-- Search results will appear here -->
-            </div>
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="mb-6">
+            <h1 class="text-3xl font-bold text-gray-800 flex items-center gap-3">
+                <i class="fas fa-cash-register text-indigo-600"></i>
+                Point of Sale
+            </h1>
+            <p class="text-gray-600 mt-1">Quick sales with keyboard shortcuts</p>
         </div>
-        
-        <div class="bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-xl font-bold mb-4">Cart</h2>
-            <div id="cart-items" class="space-y-2">
-                {% for item in cart %}
-                <div class="cart-item flex justify-between items-center p-3 border rounded-lg" data-inventory-id="{{ item.inventory_id }}">
-                    <div>
-                        <p class="font-semibold">{{ item.medicine_name }}</p>
-                        <p class="text-sm text-gray-500">{{ item.generic }} - {{ item.strength }}</p>
-                        <p class="text-sm text-gray-500">Batch: {{ item.batch_number }}</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="font-semibold">৳{{ item.total }}</p>
-                        <p class="text-sm text-gray-500">{{ item.quantity }} x ৳{{ item.unit_price }}</p>
-                        <button 
-                            class="text-red-600 hover:text-red-800 text-sm mt-1 remove-btn"
-                            data-inventory-id="{{ item.inventory_id }}"
+
+        <div class="flex gap-6">
+            <!-- Left Panel: Search and Cart -->
+            <div class="w-2/3 space-y-6">
+                <!-- Search Section -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <i class="fas fa-search text-indigo-600"></i>
+                        Search Medicines
+                    </h2>
+                    <div class="flex gap-3">
+                        <div class="flex-1 relative">
+                            <input
+                                type="text"
+                                id="search-input"
+                                class="w-full px-4 py-3 pl-11 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition"
+                                placeholder="Search medicines... (Ctrl+S)"
+                                autocomplete="off"
+                            >
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-search text-gray-400"></i>
+                            </div>
+                        </div>
+                        <input
+                            type="number"
+                            id="quantity-input"
+                            class="w-28 px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition"
+                            placeholder="Qty"
+                            value="1"
+                            min="1"
                         >
-                            Remove
+                        <button
+                            id="add-btn"
+                            class="bg-gradient-to-r from-indigo-600 to-indigo-700 text-white px-6 py-3 rounded-lg hover:from-indigo-700 hover:to-indigo-800 transition font-semibold shadow-md">
+                            <i class="fas fa-plus mr-2"></i>Add
                         </button>
                     </div>
+                    <div id="search-results" class="mt-4 hidden rounded-lg border border-gray-200 shadow-lg max-h-80 overflow-y-auto">
+                        <!-- Search results will appear here -->
+                    </div>
                 </div>
-                {% empty %}
-                <p class="text-gray-500 text-center py-8">Cart is empty</p>
-                {% endfor %}
+
+                <!-- Cart Section -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <i class="fas fa-shopping-cart text-indigo-600"></i>
+                        Cart
+                        <span class="text-sm font-normal text-gray-500">({{ cart|length }} items)</span>
+                    </h2>
+                    <div id="cart-items" class="space-y-3">
+                        {% for item in cart %}
+                        <div class="cart-item flex justify-between items-center p-4 border border-gray-200 rounded-lg hover:shadow-md" data-inventory-id="{{ item.inventory_id }}">
+                            <div class="flex-1">
+                                <p class="font-semibold text-gray-800 text-lg">{{ item.medicine_name }}</p>
+                                <p class="text-sm text-gray-500">{{ item.generic }} - {{ item.strength }}</p>
+                                <p class="text-xs text-gray-400 mt-1">Batch: {{ item.batch_number }}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-bold text-indigo-600 text-xl">৳{{ item.total }}</p>
+                                <p class="text-sm text-gray-500">{{ item.quantity }} x ৳{{ item.unit_price }}</p>
+                                <button
+                                    class="text-red-600 hover:text-red-800 text-sm mt-2 font-medium remove-btn"
+                                    data-inventory-id="{{ item.inventory_id }}"
+                                >
+                                    <i class="fas fa-trash mr-1"></i>Remove
+                                </button>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="text-center py-12">
+                            <i class="fas fa-shopping-cart text-gray-300 text-5xl mb-4"></i>
+                            <p class="text-gray-500 text-lg">Cart is empty</p>
+                            <p class="text-gray-400 text-sm">Search and add medicines to get started</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-    
-    <!-- Cart Summary and Checkout -->
-    <div class="w-1/3">
-        <div class="bg-white rounded-lg shadow-md p-6 sticky top-8">
-            <h2 class="text-xl font-bold mb-4">Summary</h2>
-            
-            <div class="space-y-2 mb-6">
-                <div class="flex justify-between">
-                    <span>Subtotal</span>
-                    <span>৳{{ subtotal }}</span>
-                </div>
-                <div class="flex justify-between">
-                    <span>Discount</span>
-                    <span>৳{{ discount }}</span>
-                </div>
-                <div class="flex justify-between">
-                    <span>Tax</span>
-                    <span>৳{{ tax }}</span>
-                </div>
-                <div class="flex justify-between font-bold text-lg border-t pt-2">
-                    <span>Total</span>
-                    <span>৳{{ total }}</span>
+
+            <!-- Right Panel: Checkout -->
+            <div class="w-1/3">
+                <div class="bg-white rounded-xl shadow-lg p-6 sticky top-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                        <i class="fas fa-receipt text-indigo-600"></i>
+                        Summary
+                    </h2>
+
+                    <div class="space-y-3 mb-6">
+                        <div class="flex justify-between text-gray-600">
+                            <span>Subtotal</span>
+                            <span class="font-semibold">৳{{ subtotal }}</span>
+                        </div>
+                        <div class="flex justify-between text-gray-600">
+                            <span>Discount</span>
+                            <span class="font-semibold text-red-600">-৳{{ discount }}</span>
+                        </div>
+                        <div class="flex justify-between text-gray-600">
+                            <span>Tax</span>
+                            <span class="font-semibold">৳{{ tax }}</span>
+                        </div>
+                        <div class="flex justify-between font-bold text-xl text-gray-800 border-t-2 border-gray-200 pt-3 mt-3">
+                            <span>Total</span>
+                            <span class="text-indigo-600">৳{{ total }}</span>
+                        </div>
+                    </div>
+
+                    <form method="post" id="checkout-form" class="space-y-4">
+                        {% csrf_token %}
+
+                        <!-- Customer Phone Search -->
+                        <div class="bg-indigo-50 p-4 rounded-lg border-2 border-indigo-200">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-phone text-indigo-600 mr-2"></i>Search Customer by Phone
+                            </label>
+                            <div class="relative">
+                                {{ form.search_phone }}
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-search text-gray-400"></i>
+                                </div>
+                            </div>
+                            <div id="customer-search-results" class="mt-3 hidden">
+                                <!-- Customer search results will appear here -->
+                            </div>
+                        </div>
+
+                        <!-- Customer Selection -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-user text-indigo-600 mr-2"></i>Customer
+                            </label>
+                            {{ form.customer }}
+                        </div>
+
+                        <!-- Customer Name -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Customer Name
+                            </label>
+                            {{ form.customer_name }}
+                        </div>
+
+                        <!-- Customer Phone (Optional) -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Phone <span class="text-gray-400 font-normal">(Optional)</span>
+                            </label>
+                            {{ form.customer_phone }}
+                        </div>
+
+                        <!-- Customer Address (Optional) -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Address <span class="text-gray-400 font-normal">(Optional)</span>
+                            </label>
+                            {{ form.customer_address }}
+                        </div>
+
+                        <!-- Payment Method -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-credit-card text-indigo-600 mr-2"></i>Payment Method
+                            </label>
+                            {{ form.payment_method }}
+                        </div>
+
+                        <!-- Discount Section -->
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-percent text-indigo-600 mr-2"></i>Discount
+                            </label>
+                            <div class="flex gap-2">
+                                {{ form.discount_type }}
+                                {{ form.discount }}
+                            </div>
+                        </div>
+
+                        <!-- Notes (Optional) -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Notes <span class="text-gray-400 font-normal">(Optional)</span>
+                            </label>
+                            {{ form.notes }}
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-4 rounded-lg hover:from-green-700 hover:to-green-800 transition font-bold text-lg shadow-md"
+                            id="complete-btn"
+                        >
+                            <i class="fas fa-check-circle mr-2"></i>Complete Sale (F10)
+                        </button>
+                    </form>
                 </div>
             </div>
-            
-            <form method="post" id="checkout-form">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button 
-                    type="submit" 
-                    class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 font-bold"
-                    id="complete-btn"
-                >
-                    Complete Sale (F10)
-                </button>
-            </form>
         </div>
     </div>
 </div>
@@ -124,18 +239,130 @@ document.addEventListener('keydown', function(e) {
         e.preventDefault();
         document.getElementById('search-input').focus();
     }
-    
+
     // Enter to add item
     if (e.key === 'Enter' && document.activeElement.id === 'search-input') {
         e.preventDefault();
         document.getElementById('add-btn').click();
     }
-    
+
     // F10 to complete sale
     if (e.key === 'F10') {
         e.preventDefault();
         document.getElementById('complete-btn').click();
     }
+});
+
+// Real-time discount calculation
+function updateTotal() {
+    const subtotal = parseFloat('{{ subtotal }}');
+    const discountType = document.querySelector('select[name="discount_type"]').value;
+    const discountValue = parseFloat(document.querySelector('input[name="discount"]').value) || 0;
+    const tax = parseFloat('{{ tax }}');
+
+    let discount = 0;
+    if (discountType === 'percentage') {
+        discount = subtotal * (discountValue / 100);
+    } else {
+        discount = discountValue;
+    }
+
+    const total = subtotal - discount + tax;
+
+    // Update display
+    document.querySelector('.flex.justify-between:nth-child(2) span:last-child').textContent = '-৳' + discount.toFixed(2);
+    document.querySelector('.flex.justify-between.font-bold span:last-child').textContent = '৳' + total.toFixed(2);
+}
+
+// Add event listeners for discount fields
+document.querySelector('select[name="discount_type"]').addEventListener('change', updateTotal);
+document.querySelector('input[name="discount"]').addEventListener('input', updateTotal);
+
+// Handle customer dropdown selection
+const customerSelect = document.querySelector('select[name="customer"]');
+if (customerSelect) {
+    customerSelect.addEventListener('change', function() {
+        const customerId = this.value;
+        if (customerId) {
+            // Get customer data from the selected option
+            const selectedOption = this.options[this.selectedIndex];
+            const customerName = selectedOption.text;
+
+            // Auto-fill customer name from dropdown
+            document.querySelector('input[name="customer_name"]').value = customerName;
+        } else {
+            // Clear fields if no customer selected
+            document.querySelector('input[name="customer_name"]').value = '';
+            document.querySelector('input[name="customer_phone"]').value = '';
+            document.querySelector('textarea[name="customer_address"]').value = '';
+        }
+    });
+}
+
+// Customer phone search
+const phoneSearchInput = document.querySelector('input[name="search_phone"]');
+const customerSearchResults = document.getElementById('customer-search-results');
+
+phoneSearchInput.addEventListener('input', function() {
+    const phone = this.value.trim();
+    if (phone.length < 3) {
+        customerSearchResults.classList.add('hidden');
+        return;
+    }
+
+    fetch(`/sales/pos/search-customer/?phone=${phone}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.results.length > 0) {
+                customerSearchResults.innerHTML = data.results.map(customer => `
+                    <div class="customer-result bg-white p-3 rounded-lg border border-indigo-200 cursor-pointer hover:bg-indigo-100 transition"
+                         data-customer-id="${customer.id}"
+                         data-name="${customer.name}"
+                         data-phone="${customer.phone}"
+                         data-address="${customer.address || ''}">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="font-semibold text-gray-800">${customer.name}</p>
+                                <p class="text-sm text-gray-600">${customer.phone}</p>
+                                ${customer.address ? `<p class="text-xs text-gray-500">${customer.address}</p>` : ''}
+                            </div>
+                            <div class="text-right text-sm">
+                                <p class="text-green-600 font-medium">৳${customer.total_purchases.toFixed(2)}</p>
+                                <p class="text-xs text-gray-500">Total Purchases</p>
+                                ${customer.total_due > 0 ? `<p class="text-red-600 font-medium">Due: ৳${customer.total_due.toFixed(2)}</p>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                customerSearchResults.classList.remove('hidden');
+
+                // Click handler for customer selection
+                document.querySelectorAll('.customer-result').forEach(el => {
+                    el.addEventListener('click', function() {
+                        // Auto-fill customer details
+                        document.querySelector('input[name="customer_name"]').value = this.dataset.name;
+                        document.querySelector('input[name="customer_phone"]').value = this.dataset.phone;
+                        document.querySelector('textarea[name="customer_address"]').value = this.dataset.address;
+                        document.querySelector('select[name="customer"]').value = this.dataset.customerId;
+
+                        // Hide search results
+                        customerSearchResults.classList.add('hidden');
+                        phoneSearchInput.value = '';
+
+                        // Show success message
+                        const customerName = this.dataset.name;
+                        const successDiv = document.createElement('div');
+                        successDiv.className = 'bg-green-100 text-green-800 p-3 rounded-lg mt-2 text-sm';
+                        successDiv.innerHTML = `<i class="fas fa-check-circle mr-2"></i>Customer "${customerName}" selected`;
+                        customerSearchResults.parentElement.appendChild(successDiv);
+                        setTimeout(() => successDiv.remove(), 3000);
+                    });
+                });
+            } else {
+                customerSearchResults.innerHTML = '<p class="text-gray-500 text-center py-2 text-sm">No customer found with this phone number</p>';
+                customerSearchResults.classList.remove('hidden');
+            }
+        });
 });
 
 // Search functionality
@@ -149,23 +376,23 @@ searchInput.addEventListener('input', function() {
         searchResults.classList.add('hidden');
         return;
     }
-    
+
     fetch(`/inventory/search/?q=${query}`)
         .then(response => response.json())
         .then(data => {
             if (data.results.length > 0) {
                 searchResults.innerHTML = data.results.map(item => `
-                    <div class="search-result p-3 border rounded-lg cursor-pointer hover:bg-gray-50" 
+                    <div class="search-result p-3 border border-gray-200 rounded-lg cursor-pointer"
                          data-inventory-id="${item.id}"
                          data-price="${item.price}"
                          data-stock="${item.stock}">
-                        <p class="font-semibold">${item.name}</p>
+                        <p class="font-semibold text-gray-800">${item.name}</p>
                         <p class="text-sm text-gray-500">${item.generic} - ${item.strength}</p>
-                        <p class="text-sm">Price: ৳${item.price} | Stock: ${item.stock}</p>
+                        <p class="text-sm text-indigo-600 font-medium">Price: ৳${item.price} | Stock: ${item.stock}</p>
                     </div>
                 `).join('');
                 searchResults.classList.remove('hidden');
-                
+
                 // Click handler for search results
                 document.querySelectorAll('.search-result').forEach(el => {
                     el.addEventListener('click', function() {
@@ -180,7 +407,7 @@ searchInput.addEventListener('input', function() {
                     });
                 });
             } else {
-                searchResults.innerHTML = '<p class="text-gray-500">No results found</p>';
+                searchResults.innerHTML = '<p class="text-gray-500 text-center py-4">No results found</p>';
                 searchResults.classList.remove('hidden');
             }
         });
@@ -192,14 +419,14 @@ document.getElementById('add-btn').addEventListener('click', function() {
         alert('Please select a medicine first');
         return;
     }
-    
+
     const quantity = parseInt(document.getElementById('quantity-input').value);
-    
+
     if (quantity > selectedMedicine.stock) {
         alert('Insufficient stock');
         return;
     }
-    
+
     fetch(`/sales/pos/add-item/?inventory_id=${selectedMedicine.inventory_id}&quantity=${quantity}`)
         .then(response => response.json())
         .then(data => {

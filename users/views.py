@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -118,11 +118,27 @@ def register_shop_with_owner(request):
         form = ShopOwnerRegistrationForm(request.POST)
         if form.is_valid():
             shop, owner = form.save()
-            messages.success(request, f'Shop {shop.name} and owner {owner.username} created successfully!')
+            messages.success(request, f'Shop "{shop.name}" and owner "{owner.username}" created successfully!')
             return redirect('dashboard:super_admin')
     else:
         form = ShopOwnerRegistrationForm()
     return render(request, 'users/register_shop_with_owner.html', {'form': form})
+
+
+@login_required
+@role_required(settings.ROLE_SUPER_ADMIN)
+def delete_shop(request, pk):
+    """Super Admin can delete a shop"""
+    from .models import Shop
+    shop = get_object_or_404(Shop, pk=pk)
+
+    if request.method == 'POST':
+        shop_name = shop.name
+        shop.delete()
+        messages.success(request, f'Shop "{shop_name}" deleted successfully!')
+        return redirect('dashboard:super_admin')
+
+    return render(request, 'users/shop_confirm_delete.html', {'shop': shop})
 
 
 def register_shop_owner(request):
@@ -160,6 +176,26 @@ def create_staff(request):
 @login_required
 def profile(request):
     """User profile view"""
+    if request.method == 'POST':
+        # Update user fields
+        user = request.user
+        user.email = request.POST.get('email', '')
+        user.phone = request.POST.get('phone', '')
+        user.save()
+
+        # Update shop fields if user has a shop
+        if user.shop:
+            shop = user.shop
+            shop.name = request.POST.get('shop_name', shop.name)
+            shop.phone = request.POST.get('shop_phone', shop.phone)
+            shop.email = request.POST.get('shop_email', shop.email)
+            shop.license_number = request.POST.get('shop_license', shop.license_number)
+            shop.address = request.POST.get('shop_address', shop.address)
+            shop.save()
+
+        messages.success(request, 'Profile updated successfully!')
+        return redirect('users:profile')
+
     return render(request, 'users/profile.html', {'user': request.user})
 
 
@@ -167,4 +203,4 @@ def logout_view(request):
     """Custom logout view that accepts both GET and POST requests"""
     logout(request)
     messages.success(request, "You have been successfully logged out.")
-    return redirect('users:login')
+    return redirect('core:home')

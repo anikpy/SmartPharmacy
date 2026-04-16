@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Pharmacy - Complete Pharmacy Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-white">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-pills text-3xl text-indigo-600"></i>
+                    <span class="text-2xl font-bold text-gray-800">Smart Pharmacy</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="#features" class="text-gray-600 hover:text-indigo-600 font-medium">Features</a>
+                    <a href="#pricing" class="text-gray-600 hover:text-indigo-600 font-medium">Pricing</a>
+                    <a href="#faq" class="text-gray-600 hover:text-indigo-600 font-medium">FAQ</a>
+                    <a href="{% url 'users:login' %}" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition font-medium">Login</a>
+                    <a href="{% url 'users:register_shop' %}" class="bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-2 rounded-lg hover:from-green-700 hover:to-green-800 transition font-medium">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-700 text-white py-24">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-5xl md:text-6xl font-bold mb-6">Complete Pharmacy Management System</h1>
+                <p class="text-xl md:text-2xl mb-8 text-indigo-100">Streamline your pharmacy operations with our all-in-one solution. Manage inventory, sales, customers, and more with ease.</p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="{% url 'users:register_shop' %}" class="bg-white text-indigo-600 px-8 py-4 rounded-lg hover:bg-gray-100 transition font-bold text-lg shadow-lg">
+                        <i class="fas fa-rocket mr-2"></i>Start Free Trial
+                    </a>
+                    <a href="#features" class="border-2 border-white text-white px-8 py-4 rounded-lg hover:bg-white/10 transition font-bold text-lg">
+                        <i class="fas fa-play-circle mr-2"></i>Learn More
+                    </a>
+                </div>
+                <p class="mt-6 text-indigo-200">First month FREE, then only ৳2,000/month</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-24 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">Everything You Need</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Powerful features designed specifically for pharmacies</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition">
+                    <div class="w-14 h-14 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center mb-6">
+                        <i class="fas fa-cash-register text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Point of Sale</h3>
+                    <p class="text-gray-600">Fast and easy checkout process. Search medicines by name or barcode, apply discounts, and complete sales in seconds.</p>
+                </div>
+                <!-- Feature 2 -->
+                <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition">
+                    <div class="w-14 h-14 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center mb-6">
+                        <i class="fas fa-boxes text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Inventory Management</h3>
+                    <p class="text-gray-600">Track stock levels in real-time. Get low stock alerts and expiry date notifications to prevent losses.</p>
+                </div>
+                <!-- Feature 3 -->
+                <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition">
+                    <div class="w-14 h-14 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center mb-6">
+                        <i class="fas fa-chart-line text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Sales Analytics</h3>
+                    <p class="text-gray-600">View sales trends, top-selling medicines, and performance metrics. Make data-driven decisions.</p>
+                </div>
+                <!-- Feature 4 -->
+                <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition">
+                    <div class="w-14 h-14 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center mb-6">
+                        <i class="fas fa-clock text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Expiry Tracking</h3>
+                    <p class="text-gray-600">Never miss an expiry date again. Get automated alerts and discount suggestions for expiring medicines.</p>
+                </div>
+                <!-- Feature 5 -->
+                <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition">
+                    <div class="w-14 h-14 rounded-full bg-gradient-to-br from-pink-400 to-pink-600 flex items-center justify-center mb-6">
+                        <i class="fas fa-users text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Customer Management</h3>
+                    <p class="text-gray-600">Build customer relationships. Track purchase history, manage dues, and offer personalized service.</p>
+                </div>
+                <!-- Feature 6 -->
+                <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition">
+                    <div class="w-14 h-14 rounded-full bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center mb-6">
+                        <i class="fas fa-file-invoice text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Reports & Insights</h3>
+                    <p class="text-gray-600">Generate profit/loss reports, tax reports, and inventory valuations. Export data for accounting.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="py-24 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">How It Works</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Get started in 3 simple steps</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="w-20 h-20 rounded-full bg-indigo-100 flex items-center justify-center mx-auto mb-6">
+                        <span class="text-4xl font-bold text-indigo-600">1</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Sign Up</h3>
+                    <p class="text-gray-600">Create your account and register your pharmacy. Takes less than 2 minutes.</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-20 h-20 rounded-full bg-indigo-100 flex items-center justify-center mx-auto mb-6">
+                        <span class="text-4xl font-bold text-indigo-600">2</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Add Inventory</h3>
+                    <p class="text-gray-600">Import or manually add your medicines to the system. Search from master catalog or add custom items.</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-20 h-20 rounded-full bg-indigo-100 flex items-center justify-center mx-auto mb-6">
+                        <span class="text-4xl font-bold text-indigo-600">3</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Start Selling</h3>
+                    <p class="text-gray-600">Use the POS terminal to process sales. Track everything in real-time.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-24 bg-gradient-to-br from-indigo-50 to-purple-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">Simple, Transparent Pricing</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Start with a free trial. No credit card required.</p>
+            </div>
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+                    <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-8 text-center">
+                        <h3 class="text-3xl font-bold mb-2">Smart Pharmacy Pro</h3>
+                        <p class="text-indigo-100 mb-4">Everything you need to run your pharmacy</p>
+                        <div class="flex items-center justify-center gap-2 mb-2">
+                            <span class="text-5xl font-bold">৳2,000</span>
+                            <span class="text-xl">/month</span>
+                        </div>
+                        <p class="text-indigo-200">First month FREE</p>
+                    </div>
+                    <div class="p-8">
+                        <ul class="space-y-4 mb-8">
+                            <li class="flex items-center gap-3">
+                                <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                                <span class="text-gray-700">Unlimited transactions</span>
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                                <span class="text-gray-700">Unlimited inventory items</span>
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                                <span class="text-gray-700">Sales analytics & reports</span>
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                                <span class="text-gray-700">Expiry date tracking</span>
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                                <span class="text-gray-700">Customer management</span>
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                                <span class="text-gray-700">Staff accounts (up to 5)</span>
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                                <span class="text-gray-700">Export reports</span>
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                                <span class="text-gray-700">Priority support</span>
+                            </li>
+                        </ul>
+                        <a href="{% url 'users:register_shop' %}" class="block w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 rounded-lg hover:from-indigo-700 hover:to-purple-700 transition font-bold text-lg text-center">
+                            Start Free Trial
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="py-24 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">Why Choose Smart Pharmacy?</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Built specifically for pharmacies, by pharmacists</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Pharmacy-Specific Features</h3>
+                    <p class="text-gray-600 mb-6">Unlike generic POS systems, Smart Pharmacy is designed specifically for pharmacies. Features like expiry date tracking, batch number management, and medicine-specific search make it perfect for your needs.</p>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Works Offline</h3>
+                    <p class="text-gray-600 mb-6">No internet? No problem. Smart Pharmacy works offline and syncs when you're back online. Never miss a sale due to connectivity issues.</p>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Easy to Use</h3>
+                    <p class="text-gray-600 mb-6">No technical expertise required. Simple, intuitive interface that anyone can learn in minutes. Your staff will be productive from day one.</p>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Affordable Pricing</h3>
+                    <p class="text-gray-600">At just ৳2,000/month after your free trial, it's the most cost-effective solution for pharmacies. No hidden fees, no long-term contracts.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-24 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">Frequently Asked Questions</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Got questions? We've got answers.</p>
+            </div>
+            <div class="max-w-3xl mx-auto space-y-6">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-2">Is there a free trial?</h3>
+                    <p class="text-gray-600">Yes! Your first month is completely free. No credit card required to start.</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-2">Can I cancel anytime?</h3>
+                    <p class="text-gray-600">Yes, you can cancel your subscription at any time. No long-term contracts or commitments.</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-2">What payment methods do you accept?</h3>
+                    <p class="text-gray-600">We accept bKash, Nagad, bank transfer, and cash payments.</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-2">Do I need special hardware?</h3>
+                    <p class="text-gray-600">No! Smart Pharmacy works on any device - computer, tablet, or smartphone. No special hardware required.</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-2">Is my data secure?</h3>
+                    <p class="text-gray-600">Absolutely. We use industry-standard encryption and security measures to protect your data. Your data belongs to you.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-24 bg-gradient-to-br from-indigo-600 to-purple-700 text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-4xl font-bold mb-6">Ready to Transform Your Pharmacy?</h2>
+            <p class="text-xl mb-8 text-indigo-100 max-w-2xl mx-auto">Join hundreds of pharmacies already using Smart Pharmacy. Start your free trial today.</p>
+            <a href="{% url 'users:register_shop' %}" class="inline-block bg-white text-indigo-600 px-10 py-4 rounded-lg hover:bg-gray-100 transition font-bold text-lg shadow-lg">
+                <i class="fas fa-rocket mr-2"></i>Start Free Trial
+            </a>
+            <p class="mt-6 text-indigo-200">No credit card required • First month FREE</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <i class="fas fa-pills text-3xl text-indigo-400"></i>
+                        <span class="text-2xl font-bold">Smart Pharmacy</span>
+                    </div>
+                    <p class="text-gray-400">Complete pharmacy management system for modern pharmacies.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Product</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#features" class="text-gray-400 hover:text-white">Features</a></li>
+                        <li><a href="#pricing" class="text-gray-400 hover:text-white">Pricing</a></li>
+                        <li><a href="#faq" class="text-gray-400 hover:text-white">FAQ</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Company</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">About Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Contact</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Contact</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><i class="fas fa-envelope mr-2"></i>aniklpu01@gmail.com</li>
+                        <li><i class="fas fa-phone mr-2"></i>+880 1627220072</li>
+                        <li><i class="fas fa-map-marker-alt mr-2"></i>Dhaka, Bangladesh</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2026 Smart Pharmacy. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

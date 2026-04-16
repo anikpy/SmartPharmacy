@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if supplier %}Edit Supplier{% else %}Add Supplier{% endif %} - Smart Pharmacy{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+    <div class="max-w-2xl mx-auto">
+        <!-- Header -->
+        <div class="mb-6">
+            <h1 class="text-3xl font-bold text-gray-800 flex items-center gap-3">
+                <i class="fas fa-truck text-indigo-600"></i>
+                {% if supplier %}Edit Supplier{% else %}Add Supplier{% endif %}
+            </h1>
+            <p class="text-gray-600 mt-1">{% if supplier %}Update supplier information{% else %}Add a new supplier to your database{% endif %}</p>
+        </div>
+
+        <!-- Form Card -->
+        <div class="bg-white rounded-xl shadow-lg p-8">
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+
+                <!-- Supplier Name -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-building text-indigo-600 mr-2"></i>Supplier Name
+                    </label>
+                    {{ form.name }}
+                </div>
+
+                <!-- Contact Person -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-user text-indigo-600 mr-2"></i>Contact Person
+                    </label>
+                    {{ form.contact_person }}
+                </div>
+
+                <!-- Phone -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-phone text-indigo-600 mr-2"></i>Phone Number
+                    </label>
+                    {{ form.phone }}
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-envelope text-indigo-600 mr-2"></i>Email Address
+                    </label>
+                    {{ form.email }}
+                </div>
+
+                <!-- Address -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-map-marker-alt text-indigo-600 mr-2"></i>Address
+                    </label>
+                    {{ form.address }}
+                </div>
+
+                <!-- License Number -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-id-card text-indigo-600 mr-2"></i>License Number
+                    </label>
+                    {{ form.license_number }}
+                </div>
+
+                <!-- Tax ID -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-receipt text-indigo-600 mr-2"></i>Tax ID
+                    </label>
+                    {{ form.tax_id }}
+                </div>
+
+                <!-- Notes -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-sticky-note text-indigo-600 mr-2"></i>Notes
+                    </label>
+                    {{ form.notes }}
+                </div>
+
+                <!-- Active Status -->
+                <div class="flex items-center">
+                    {{ form.is_active }}
+                    <label class="ml-2 text-sm text-gray-700">Active Supplier</label>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex gap-4">
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white py-3 rounded-lg hover:from-indigo-700 hover:to-indigo-800 transition font-semibold shadow-md">
+                        <i class="fas fa-save mr-2"></i>{% if supplier %}Update Supplier{% else %}Add Supplier{% endif %}
+                    </button>
+                    <a href="{% url 'sales:supplier_list' %}" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg hover:bg-gray-300 transition font-semibold text-center">
+                        <i class="fas fa-arrow-left mr-2"></i>Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

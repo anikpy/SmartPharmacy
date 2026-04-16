@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Shop - Smart Pharmacy{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto mt-10">
+    <div class="bg-white rounded-lg shadow-lg p-8">
+        <div class="text-center mb-6">
+            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-trash-alt text-3xl text-red-600"></i>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-800">Delete Shop</h1>
+        </div>
+
+        <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <p class="text-red-800">
+                <i class="fas fa-exclamation-triangle mr-2"></i>
+                <strong>Warning:</strong> This action cannot be undone. Deleting this shop will also delete all associated data including:
+            </p>
+            <ul class="list-disc list-inside text-red-700 mt-2 ml-2">
+                <li>All shop staff members</li>
+                <li>All inventory items</li>
+                <li>All sales transactions</li>
+                <li>All customer records</li>
+            </ul>
+        </div>
+
+        <div class="bg-gray-50 rounded-lg p-4 mb-6">
+            <p class="text-gray-700"><strong>Shop Name:</strong> {{ shop.name }}</p>
+            <p class="text-gray-700"><strong>License Number:</strong> {{ shop.license_number }}</p>
+            <p class="text-gray-700"><strong>Address:</strong> {{ shop.address }}</p>
+            <p class="text-gray-700"><strong>Phone:</strong> {{ shop.phone }}</p>
+            <p class="text-gray-700"><strong>Email:</strong> {{ shop.email }}</p>
+            {% if shop.owner %}
+            <p class="text-gray-700"><strong>Owner:</strong> {{ shop.owner.get_full_name|default:shop.owner.username }}</p>
+            {% endif %}
+        </div>
+
+        <form method="post" class="flex gap-4">
+            {% csrf_token %}
+            <button type="submit" class="flex-1 bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition font-semibold">
+                <i class="fas fa-trash-alt mr-2"></i>Delete Shop
+            </button>
+            <a href="{% url 'dashboard:super_admin' %}" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg hover:bg-gray-300 transition font-semibold text-center">
+                <i class="fas fa-times mr-2"></i>Cancel
+            </a>
+        </form>
+    </div>
+</div>
+{% endblock %}

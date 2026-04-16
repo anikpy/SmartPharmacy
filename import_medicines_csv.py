@@ -19,7 +19,7 @@ import re
 from decimal import Decimal
 
 # Setup Django
-sys.path.append('/home/anik/GitProject/SmartPharmacy')
+sys.path.append('/home/anik/Personal/SmartPharmacy')
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'smart_pharmacy.settings')
 django.setup()
 
@@ -73,7 +73,7 @@ def generate_slug(brand_name, strength):
     """Generate a clean URL slug"""
     if not brand_name:
         return 'unknown-medicine'
-    
+
     text = f"{brand_name}-{strength}" if strength else brand_name
     # Remove special characters and convert to lowercase
     slug = re.sub(r'[^\w\s-]', '', text.lower())
@@ -81,8 +81,44 @@ def generate_slug(brand_name, strength):
     slug = re.sub(r'[\s_-]+', '-', slug)
     # Remove leading/trailing dashes
     slug = slug.strip('-')
-    
+
     return slug[:255]  # Limit to max length
+
+def extract_price(package_container):
+    """Extract price from package container field"""
+    if not package_container:
+        return Decimal('0.00')
+
+    # Try to find price patterns like "৳ 40.12" or "৳40.12"
+    # Pattern 1: "৳ X.XX" (Bangladeshi Taka symbol)
+    price_pattern = r'৳\s*([\d,]+\.?\d*)'
+    matches = re.findall(price_pattern, package_container)
+
+    if matches:
+        # Take the first price found (usually the unit price)
+        price_str = matches[0].replace(',', '')  # Remove commas
+        try:
+            return Decimal(price_str)
+        except:
+            return Decimal('0.00')
+
+    # Pattern 2: Try to find any decimal number that looks like a price
+    # This is a fallback for other currency symbols or formats
+    decimal_pattern = r':\s*([\d,]+\.?\d*)'
+    decimal_matches = re.findall(decimal_pattern, package_container)
+
+    if decimal_matches:
+        # Take the first decimal number after a colon
+        price_str = decimal_matches[0].replace(',', '')
+        try:
+            price = Decimal(price_str)
+            # Only accept if it looks like a reasonable price (0.01 to 100000)
+            if 0.01 <= price <= 100000:
+                return price
+        except:
+            pass
+
+    return Decimal('0.00')
 
 def import_medicines():
     print("🏥 Starting Medicine CSV Import...")
@@ -136,6 +172,9 @@ def import_medicines():
                     package_container = clean_text(row[8])
                     package_size = clean_text(row[9])
 
+                    # Extract price from package container
+                    suggested_price = extract_price(package_container)
+
                     # Validate required fields
                     if not brand_name:
                         print(f"⚠️  Row {row_num}: Missing brand name, skipping...")
@@ -178,6 +217,7 @@ def import_medicines():
                         manufacturer=manufacturer or 'Unknown',
                         package_container=package_container,
                         package_size=package_size,
+                        suggested_price=suggested_price,
                         is_active=True
                     )
 
@@ -185,7 +225,8 @@ def import_medicines():
 
                     # Show some imported items for verification
                     if imported <= 5 or imported % 500 == 0:
-                        print(f"✅ Imported: {medicine.brand_name} | {medicine.generic} | {medicine.strength}")
+                        price_display = f"৳{medicine.suggested_price}" if medicine.suggested_price > 0 else "No price"
+                        print(f"✅ Imported: {medicine.brand_name} | {medicine.generic} | {medicine.strength} | Price: {price_display}")
 
                 except Exception as e:
                     print(f"❌ Error at row {row_num}: {str(e)}")

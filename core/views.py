@@ -8,7 +8,7 @@ def home(request):
     """Landing page"""
     if request.user.is_authenticated:
         return redirect('core:dashboard')
-    return render(request, 'core/home.html')
+    return render(request, 'landing.html')
 
 
 @login_required

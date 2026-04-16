@@ -1,0 +1,236 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard Analytics - Smart Pharmacy{% endblock %}
+
+{% block extra_css %}
+<style>
+    .chart-container {
+        position: relative;
+        height: 300px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800 flex items-center gap-3">
+                    <i class="fas fa-chart-line text-indigo-600"></i>
+                    Dashboard Analytics
+                </h1>
+                <p class="text-gray-600 mt-1">Sales performance and inventory insights</p>
+            </div>
+            <div class="flex gap-2">
+                <a href="?days=7" class="px-4 py-2 bg-white rounded-lg border border-gray-200 hover:bg-gray-50 transition font-medium text-gray-700 {% if days == 7 %}bg-indigo-100 border-indigo-300{% endif %}">7 Days</a>
+                <a href="?days=30" class="px-4 py-2 bg-white rounded-lg border border-gray-200 hover:bg-gray-50 transition font-medium text-gray-700 {% if days == 30 %}bg-indigo-100 border-indigo-300{% endif %}">30 Days</a>
+                <a href="?days=90" class="px-4 py-2 bg-white rounded-lg border border-gray-200 hover:bg-gray-50 transition font-medium text-gray-700 {% if days == 90 %}bg-indigo-100 border-indigo-300{% endif %}">90 Days</a>
+            </div>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500 font-medium">Total Sales</p>
+                        <p class="text-2xl font-bold text-gray-900 mt-1">৳{{ total_sales|floatformat:2 }}</p>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
+                        <i class="fas fa-dollar-sign text-white text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500 font-medium">Transactions</p>
+                        <p class="text-2xl font-bold text-gray-900 mt-1">{{ total_transactions }}</p>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+                        <i class="fas fa-receipt text-white text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500 font-medium">Avg. Transaction</p>
+                        <p class="text-2xl font-bold text-gray-900 mt-1">৳{{ avg_transaction_value|floatformat:2 }}</p>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
+                        <i class="fas fa-chart-bar text-white text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500 font-medium">Date Range</p>
+                        <p class="text-lg font-bold text-gray-900 mt-1">{{ start_date }} to {{ end_date }}</p>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center">
+                        <i class="fas fa-calendar text-white text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- Sales Chart -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="fas fa-chart-area text-indigo-600"></i>
+                    Sales Trend
+                </h2>
+                <div class="chart-container">
+                    <canvas id="salesChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Top Medicines -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="fas fa-pills text-indigo-600"></i>
+                    Top Selling Medicines
+                </h2>
+                <div class="space-y-3">
+                    {% for medicine in top_medicines %}
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div>
+                            <p class="font-semibold text-gray-800">{{ medicine.medicine_name }}</p>
+                            <p class="text-sm text-gray-500">{{ medicine.total_quantity }} sold</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-indigo-600">৳{{ medicine.total_revenue|floatformat:2 }}</p>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-gray-500 text-center py-4">No sales data available</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- Low Stock Alerts -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="fas fa-exclamation-triangle text-red-600"></i>
+                    Low Stock Alerts
+                    {% if low_stock_items %}
+                    <span class="ml-auto bg-red-100 text-red-800 text-xs font-semibold px-2 py-1 rounded-full">{{ low_stock_items|length }}</span>
+                    {% endif %}
+                </h2>
+                <div class="space-y-3">
+                    {% for item in low_stock_items|slice:":5" %}
+                    <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg border-l-4 border-red-500">
+                        <div>
+                            <p class="font-semibold text-gray-800">{{ item.master_medicine.brand_name }}</p>
+                            <p class="text-sm text-gray-600">Stock: {{ item.stock_quantity }} / Threshold: {{ item.low_stock_threshold }}</p>
+                        </div>
+                        <a href="{% url 'inventory:list' %}" class="text-red-600 hover:text-red-800 font-medium text-sm">
+                            <i class="fas fa-plus mr-1"></i>Restock
+                        </a>
+                    </div>
+                    {% empty %}
+                    <p class="text-gray-500 text-center py-4">No low stock items</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Expiring Soon -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="fas fa-clock text-orange-600"></i>
+                    Expiring Soon
+                    {% if expiring_soon %}
+                    <span class="ml-auto bg-orange-100 text-orange-800 text-xs font-semibold px-2 py-1 rounded-full">{{ expiring_soon|length }}</span>
+                    {% endif %}
+                </h2>
+                <div class="space-y-3">
+                    {% for item in expiring_soon|slice:":5" %}
+                    <div class="flex items-center justify-between p-3 bg-orange-50 rounded-lg border-l-4 border-orange-500">
+                        <div>
+                            <p class="font-semibold text-gray-800">{{ item.master_medicine.brand_name }}</p>
+                            <p class="text-sm text-gray-600">Expires: {{ item.expiry_date|date:"Y-m-d" }}</p>
+                        </div>
+                        <span class="text-orange-600 font-medium text-sm">
+                            {% if item.expiry_date|timesince %}{{ item.expiry_date|timesince }}{% endif %}
+                        </span>
+                    </div>
+                    {% empty %}
+                    <p class="text-gray-500 text-center py-4">No items expiring soon</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Methods -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <i class="fas fa-credit-card text-indigo-600"></i>
+                Payment Method Breakdown
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {% for method in payment_methods %}
+                <div class="bg-gray-50 rounded-lg p-4 text-center">
+                    <p class="text-sm text-gray-500 font-medium">{{ method.get_payment_method_display }}</p>
+                    <p class="text-xl font-bold text-gray-900 mt-1">৳{{ method.total|floatformat:2 }}</p>
+                    <p class="text-xs text-gray-400 mt-1">{{ method.count__sum }} transactions</p>
+                </div>
+                {% empty %}
+                <p class="text-gray-500 text-center py-4 col-span-4">No payment data available</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Sales Chart
+const ctx = document.getElementById('salesChart').getContext('2d');
+const salesData = {{ daily_sales_json|safe }};
+
+if (salesData && salesData.length > 0) {
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: salesData.map(d => d.date),
+            datasets: [{
+                label: 'Sales',
+                data: salesData.map(d => d.sales),
+                borderColor: 'rgb(99, 102, 241)',
+                backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '৳' + value;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+</script>
+{% endblock %}

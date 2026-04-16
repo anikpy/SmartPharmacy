@@ -16,6 +16,7 @@ class RoleBasedAccessMiddleware:
 
     # Public paths that don't require authentication
     PUBLIC_PATHS = [
+        '/',
         '/accounts/login/',
         '/accounts/logout/',
         '/accounts/register/',

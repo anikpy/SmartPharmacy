@@ -78,9 +78,9 @@ def inventory_add(request):
                 local_price=form.cleaned_data['local_price'],
                 stock_quantity=form.cleaned_data['stock_quantity'],
                 expiry_date=form.cleaned_data['expiry_date'],
-                batch_number=form.cleaned_data['batch_number']
+                batch_number='N/A'  # Default value since batch number is not required
             )
-            
+
             # Create stock adjustment record
             StockAdjustment.objects.create(
                 inventory=inventory,
@@ -91,12 +91,12 @@ def inventory_add(request):
                 reason='Initial stock addition',
                 adjusted_by=request.user
             )
-            
+
             messages.success(request, f'{inventory.master_medicine.brand_name} added to inventory!')
             return redirect('inventory:list')
     else:
         form = AddToInventoryForm()
-    
+
     return render(request, 'inventory/form.html', {'form': form, 'action': 'Add'})
 
 
@@ -342,7 +342,7 @@ def custom_inventory_add(request):
                 local_price=form.cleaned_data['local_price'],
                 stock_quantity=form.cleaned_data['stock_quantity'],
                 expiry_date=form.cleaned_data['expiry_date'],
-                batch_number=form.cleaned_data['batch_number']
+                batch_number='N/A'  # Default value since batch number is not required
             )
 
             # Create stock adjustment record

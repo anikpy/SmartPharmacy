@@ -3,6 +3,35 @@ from django.conf import settings
 from inventory.models import ShopInventory
 
 
+class Supplier(models.Model):
+    """Supplier model for managing medicine suppliers"""
+    name = models.CharField(max_length=200)
+    phone = models.CharField(max_length=20, blank=True)
+    email = models.EmailField(blank=True)
+    address = models.TextField(blank=True)
+    license_number = models.CharField(max_length=100, blank=True)
+    tax_id = models.CharField(max_length=100, blank=True)
+    contact_person = models.CharField(max_length=200, blank=True)
+    notes = models.TextField(blank=True)
+    shop = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='suppliers')
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'suppliers'
+        verbose_name = 'Supplier'
+        verbose_name_plural = 'Suppliers'
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['shop']),
+            models.Index(fields=['name']),
+        ]
+
+    def __str__(self):
+        return self.name
+
+
 class Customer(models.Model):
     """Customer model for tracking sales and dues"""
     name = models.CharField(max_length=200)

@@ -30,7 +30,7 @@
         <ul class="space-y-2">
             {% for shop in recent_shops %}
             <li class="flex justify-between items-center py-2 border-b">
-                <div>
+                <div class="flex-1">
                     <span class="font-medium">{{ shop.name }}</span>
                     {% if shop.owner %}
                     <p class="text-sm text-gray-500">Owner: {{ shop.owner.first_name }} {{ shop.owner.last_name }}</p>
@@ -39,7 +39,12 @@
                     <p class="text-sm text-red-500">No owner assigned</p>
                     {% endif %}
                 </div>
-                <span class="text-sm text-gray-500">{{ shop.created_at|date:"M d, Y" }}</span>
+                <div class="flex items-center gap-2">
+                    <span class="text-sm text-gray-500">{{ shop.created_at|date:"M d, Y" }}</span>
+                    <a href="{% url 'users:delete_shop' shop.pk %}" class="text-red-600 hover:text-red-800 text-sm">
+                        <i class="fas fa-trash-alt"></i> Delete
+                    </a>
+                </div>
             </li>
             {% empty %}
             <li class="text-gray-500">No shops registered yet</li>

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Customer - Smart Pharmacy{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+    <div class="max-w-2xl mx-auto">
+        <!-- Header -->
+        <div class="mb-6">
+            <h1 class="text-3xl font-bold text-gray-800 flex items-center gap-3">
+                <i class="fas fa-user-times text-red-600"></i>
+                Delete Customer
+            </h1>
+            <p class="text-gray-600 mt-1">Are you sure you want to delete this customer?</p>
+        </div>
+
+        <!-- Confirmation Card -->
+        <div class="bg-white rounded-xl shadow-lg p-8">
+            <div class="mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Customer Details</h2>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <p class="font-medium text-gray-900 text-lg">{{ customer.name }}</p>
+                    <p class="text-sm text-gray-600 mt-1">Phone: {{ customer.phone }}</p>
+                    {% if customer.address %}
+                    <p class="text-sm text-gray-600">Address: {{ customer.address }}</p>
+                    {% endif %}
+                    {% if customer.email %}
+                    <p class="text-sm text-gray-600">Email: {{ customer.email }}</p>
+                    {% endif %}
+                    <p class="text-sm text-indigo-600 mt-2">Total Due: ৳{{ customer.total_due }}</p>
+                </div>
+            </div>
+
+            <div class="bg-orange-50 border-l-4 border-orange-500 p-4 mb-6">
+                <p class="text-orange-700">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    Warning: This action cannot be undone. The customer will be permanently deleted from your records.
+                </p>
+            </div>
+
+            <form method="post" class="flex gap-4">
+                {% csrf_token %}
+                <button type="submit" class="flex-1 bg-gradient-to-r from-red-600 to-red-700 text-white py-3 rounded-lg hover:from-red-700 hover:to-red-800 transition font-semibold shadow-md">
+                    <i class="fas fa-trash mr-2"></i>Delete Customer
+                </button>
+                <a href="{% url 'sales:customer_list' %}" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg hover:bg-gray-300 transition font-semibold text-center">
+                    <i class="fas fa-arrow-left mr-2"></i>Cancel
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

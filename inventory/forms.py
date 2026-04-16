@@ -6,12 +6,11 @@ from catalog.models import MasterCatalog
 class ShopInventoryForm(forms.ModelForm):
     class Meta:
         model = ShopInventory
-        fields = ['master_medicine', 'local_price', 'stock_quantity', 'expiry_date', 'batch_number', 'low_stock_threshold']
+        fields = ['master_medicine', 'local_price', 'stock_quantity', 'expiry_date', 'low_stock_threshold']
         widgets = {
             'local_price': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
             'stock_quantity': forms.NumberInput(attrs={'class': 'form-control'}),
             'expiry_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'batch_number': forms.TextInput(attrs={'class': 'form-control'}),
             'low_stock_threshold': forms.NumberInput(attrs={'class': 'form-control'}),
         }
 
@@ -37,22 +36,16 @@ class AddToInventoryForm(forms.Form):
         widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         label='Expiry Date'
     )
-    batch_number = forms.CharField(
-        max_length=100,
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label='Batch Number'
-    )
 
 
 class ShopCustomMedicineInventoryForm(forms.ModelForm):
     class Meta:
         model = ShopCustomMedicineInventory
-        fields = ['custom_medicine', 'local_price', 'stock_quantity', 'expiry_date', 'batch_number', 'low_stock_threshold']
+        fields = ['custom_medicine', 'local_price', 'stock_quantity', 'expiry_date', 'low_stock_threshold']
         widgets = {
             'local_price': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
             'stock_quantity': forms.NumberInput(attrs={'class': 'form-control'}),
             'expiry_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'batch_number': forms.TextInput(attrs={'class': 'form-control'}),
             'low_stock_threshold': forms.NumberInput(attrs={'class': 'form-control'}),
         }
 
@@ -77,11 +70,6 @@ class AddCustomMedicineToInventoryForm(forms.Form):
     expiry_date = forms.DateField(
         widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         label='Expiry Date'
-    )
-    batch_number = forms.CharField(
-        max_length=100,
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label='Batch Number'
     )
 
     def __init__(self, shop, *args, **kwargs):

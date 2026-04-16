@@ -128,14 +128,18 @@ def register_shop_with_owner(request):
 @login_required
 @role_required(settings.ROLE_SUPER_ADMIN)
 def delete_shop(request, pk):
-    """Super Admin can delete a shop"""
+    """Super Admin can delete a shop (soft delete)"""
     from .models import Shop
     shop = get_object_or_404(Shop, pk=pk)
 
     if request.method == 'POST':
         shop_name = shop.name
-        shop.delete()
-        messages.success(request, f'Shop "{shop_name}" deleted successfully!')
+        # Soft delete - set is_active to False instead of deleting
+        shop.is_active = False
+        shop.save()
+        # Also deactivate all users associated with this shop
+        shop.staff.update(is_active=False)
+        messages.success(request, f'Shop "{shop_name}" deactivated successfully!')
         return redirect('dashboard:super_admin')
 
     return render(request, 'users/shop_confirm_delete.html', {'shop': shop})

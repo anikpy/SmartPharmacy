@@ -103,15 +103,20 @@ class ShopOwnerSelfRegistrationForm(UserCreationForm):
         cleaned_data = super().clean()
         password1 = cleaned_data.get('password1')
         password2 = cleaned_data.get('password2')
-        
+
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError("Passwords don't match")
-        
+
         # Check if license number already exists
         license_number = cleaned_data.get('shop_license_number')
         if license_number and Shop.objects.filter(license_number=license_number).exists():
             raise forms.ValidationError("A shop with this license number already exists")
-        
+
+        # Check if shop email already exists
+        shop_email = cleaned_data.get('shop_email')
+        if shop_email and Shop.objects.filter(email=shop_email).exists():
+            raise forms.ValidationError("A shop with this email already exists")
+
         return cleaned_data
 
     def save(self, commit=True):

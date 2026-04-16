@@ -16,15 +16,20 @@
         </div>
     </div>
 
-    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6 relative">
         <form method="get" class="flex gap-2">
-            <input
-                type="text"
-                name="q"
-                value="{{ query }}"
-                class="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Search medicines by name, generic, or manufacturer..."
-            >
+            <div class="flex-1 relative">
+                <input
+                    type="text"
+                    id="medicine-search"
+                    name="q"
+                    value="{{ query }}"
+                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Search medicines by name, generic, or manufacturer..."
+                    autocomplete="off"
+                >
+                <div id="search-results" class="absolute z-10 w-full mt-1 bg-white border rounded-lg shadow-lg hidden max-h-96 overflow-y-auto"></div>
+            </div>
             <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
                 <i class="fas fa-search mr-2"></i>Search
             </button>
@@ -91,29 +96,71 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize smart search
-    const medicineSearch = new MedicineSearch('#medicine-search', '#search-results', {
-        onSelect: function(medicine) {
-            // When a medicine is selected, highlight it in the current list
-            console.log('Selected medicine:', medicine);
-            highlightMedicineInList(medicine.id);
-        },
-        minLength: 1,
-        delay: 300
+    const searchInput = document.getElementById('medicine-search');
+    const searchResults = document.getElementById('search-results');
+    let searchTimeout;
+
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        const query = this.value.trim();
+
+        if (query.length < 1) {
+            searchResults.classList.add('hidden');
+            return;
+        }
+
+        searchTimeout = setTimeout(() => {
+            fetchSearchResults(query);
+        }, 300);
     });
 
-    function highlightMedicineInList(medicineId) {
-        // Remove previous highlights
-        document.querySelectorAll('tbody tr').forEach(row => {
-            row.classList.remove('bg-blue-50');
-        });
-
-        // Highlight the selected medicine
-        const targetRow = document.querySelector(`tr[data-medicine-id="${medicineId}"]`);
-        if (targetRow) {
-            targetRow.classList.add('bg-blue-50');
-            targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Hide results when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+            searchResults.classList.add('hidden');
         }
+    });
+
+    async function fetchSearchResults(query) {
+        try {
+            const response = await fetch(`/catalog/api/search/?q=${encodeURIComponent(query)}`);
+            const data = await response.json();
+
+            if (data.results && data.results.length > 0) {
+                displayResults(data.results);
+            } else {
+                searchResults.innerHTML = '<div class="p-4 text-gray-500 text-center">No medicines found</div>';
+                searchResults.classList.remove('hidden');
+            }
+        } catch (error) {
+            console.error('Search error:', error);
+        }
+    }
+
+    function displayResults(results) {
+        searchResults.innerHTML = results.map(med => `
+            <div class="p-3 hover:bg-blue-50 cursor-pointer border-b last:border-b-0 search-result-item"
+                 data-medicine-id="${med.id}"
+                 data-brand-name="${med.brand_name}">
+                <div class="font-medium text-gray-900">${med.brand_name}</div>
+                <div class="text-sm text-gray-600">${med.strength || ''} ${med.generic || ''}</div>
+                <div class="text-xs text-gray-500">${med.manufacturer || ''}</div>
+            </div>
+        `).join('');
+
+        searchResults.classList.remove('hidden');
+
+        // Add click handlers to results
+        document.querySelectorAll('.search-result-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const medicineId = this.getAttribute('data-medicine-id');
+                const brandName = this.getAttribute('data-brand-name');
+                searchInput.value = brandName;
+                searchResults.classList.add('hidden');
+                // Submit the form to filter the list
+                searchInput.closest('form').submit();
+            });
+        });
     }
 });
 </script>

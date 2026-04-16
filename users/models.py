@@ -16,7 +16,7 @@ class Shop(models.Model):
     dgda_license = models.CharField(max_length=100, blank=True, help_text="DGDA regulatory license number")
     address = models.TextField()
     phone = models.CharField(max_length=20)
-    email = models.EmailField()
+    email = models.EmailField(unique=True)
     subscription_tier = models.CharField(max_length=20, choices=SUBSCRIPTION_TIERS, default='BASIC')
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
